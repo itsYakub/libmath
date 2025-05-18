@@ -1,0 +1,49 @@
+#define MATHLIB_IMPLEMENTATION
+#include "../mathlib.h"
+
+#include <stdio.h>
+
+static const char	*__vec4_tostr(t_vec4);
+
+int main(void) {
+	t_vec4	v0;
+	t_vec4	v1;
+	t_vec4	v2;
+
+	puts("---");
+
+	v0 = ml_vec4(8.0f, 16.0f, 32.0f, 64.0f);
+	printf("v0: %s\n", __vec4_tostr(v0));
+
+	puts("---");
+
+	v1 = ml_vec4_cpy(v0);
+	printf("v1: %s\n", __vec4_tostr(v1));
+	v1 = ml_vec4_mulv(v1, 2);
+	printf("v1 * 2: %s\n", __vec4_tostr(v1));
+	v1 = ml_vec4_addv(v1, 4);
+	printf("v1 + 2: %s\n", __vec4_tostr(v1));
+	v1 = ml_vec4_divv(v1, 3);
+	printf("v1 / 3: %s\n", __vec4_tostr(v1));
+	v1 = ml_vec4_subv(v1, 1);
+	printf("v1 - 1: %s\n", __vec4_tostr(v1));
+
+	puts("---");
+
+	v2 = ml_vec4_cpy(v0);
+	printf("v2: %s\n", __vec4_tostr(v2));
+	printf("v2 == v0: %s\n", ml_vec4_eq(v2, v0) ? "true" : "false");
+	printf("v2 == v1: %s\n", ml_vec4_eq(v2, v1) ? "true" : "false");
+
+	puts("---");
+}
+
+static const char	*__vec4_tostr(t_vec4 v) {
+	static char	_str[64];
+
+	for (size_t i = 0; i < 64; i++) {
+		_str[i] = 0;
+	}
+	snprintf(_str, 64, "x.%f, y.%f, z.%f, w.%f", v.x, v.y, v.z, v.w);
+	return (_str);
+}

@@ -47,6 +47,9 @@ ML_API int		ml_lerpi(int, int, float);
 ML_API int		ml_lerpi_zo(int, int, float);
 ML_API void		ml_swapi(int *, int *);
 
+ML_API int		ml_randi(int, int);
+ML_API float	ml_randf(float, float);
+
 /*	SECTION: t_vec2
  * */
 
@@ -126,6 +129,7 @@ union u_vec4 {
 };
 
 typedef union u_vec4	t_vec4;
+typedef union u_vec4	t_rect;
 typedef union u_vec4	t_col4;
 typedef union u_vec4	t_col;
 
@@ -142,7 +146,37 @@ ML_API t_vec4	ml_vec4_divv(t_vec4, float);
 
 ML_API bool		ml_vec4_eq(t_vec4, t_vec4);
 
+/*	SECTION: t_mat4
+ * */
+
+union u_mat4 {
+	float		ptr[4][4];
+	t_vec4		vec[4];
+	struct {
+		float	m0,  m1,  m2,  m3;
+		float	m4,  m5,  m6,  m7;
+		float	m8,  m9,  m10, m11;
+		float	m12, m13, m14, m15;
+	};
+};
+
+typedef union u_mat4	t_mat4;
+
+ML_API t_mat4	ml_mat4_zero(void);
+ML_API t_mat4	ml_mat4_identity(void);
+ML_API t_mat4	ml_mat4_add(t_mat4, t_mat4);
+ML_API t_mat4	ml_mat4_sub(t_mat4, t_mat4);
+ML_API t_mat4	ml_mat4_mul(t_mat4, t_mat4);
+ML_API t_mat4	ml_mat4_mulv(t_mat4, float);
+ML_API t_mat4	ml_mat4_ortho(float, float, float, float, float, float);
+ML_API t_mat4	ml_mat4_persp(float, float, float, float);
+
+ML_API bool		ml_mat4_eq(t_mat4, t_mat4);
+
 # if defined (MATHLIB_IMPLEMENTATION)
+#  include <math.h>
+#  include <time.h>
+#  include <stdlib.h>
 
 /*	SECTION: utils
  * */
@@ -169,6 +203,14 @@ ML_API void	ml_swapi(int *a, int *b) {
 	_t = *a;
 	*a = *b;
 	*b = _t;
+}
+
+ML_API int	ml_randi(int min, int max) {
+	return (min + (rand() % (max + 1 - min)));
+}
+
+ML_API float	ml_randf(float min, float max) {
+	return (min + ((float) rand() / (float) RAND_MAX) * (max - min));
 }
 
 /*	SECTION: t_vec2
@@ -218,6 +260,177 @@ ML_API t_vec4	ml_vec4_div(t_vec4 a, t_vec4 b) { return ((t_vec4) { a.x / b.x, a.
 ML_API t_vec4	ml_vec4_divv(t_vec4 v, float f) { return ((t_vec4) { v.x / f, v.y / f, v.z / f, v.z / f } ); }
 
 ML_API bool		ml_vec4_eq(t_vec4 a, t_vec4 b) { return (a.x == b.x && a.y == b.y && a.z == b.z && a.w == b.w); }
+
+/*	SECTION: t_mat4
+ * */
+
+ML_API t_mat4	ml_mat4_zero(void) { return ((t_mat4) { 0 } ); }
+
+ML_API t_mat4	ml_mat4_identity(void) {
+	t_mat4	_result;
+
+	_result = (t_mat4) {
+		1.0f, 0.0f, 0.0f, 0.0f,
+		0.0f, 1.0f, 0.0f, 0.0f,
+		0.0f, 0.0f, 1.0f, 0.0f,
+		0.0f, 0.0f, 0.0f, 1.0f,
+	};
+	return (_result);
+}
+
+/*	[a b] [e f] | [a+e b+f]
+ *	[c d] [g h] | [c+g d+h]
+ * */
+
+ML_API t_mat4	ml_mat4_add(t_mat4 a, t_mat4 b) {
+	t_mat4	_result;
+
+	/* 1st. row */
+	_result.m0 = a.m0 + b.m0;
+	_result.m1 = a.m1 + b.m1;
+	_result.m2 = a.m2 + b.m2;
+	_result.m3 = a.m3 + b.m3;
+	
+	/* 2nd. row */
+	_result.m4 = a.m4 + b.m4;
+	_result.m5 = a.m5 + b.m5;
+	_result.m6 = a.m6 + b.m6;
+	_result.m7 = a.m7 + b.m7;
+	
+	/* 3rd. row */
+	_result.m8 = a.m8 + b.m8;
+	_result.m9 = a.m9 + b.m9;
+	_result.m10 = a.m10 + b.m10;
+	_result.m11 = a.m11 + b.m11;
+	
+	/* 4th. row */
+	_result.m12 = a.m12 + b.m12;
+	_result.m13 = a.m13 + b.m13;
+	_result.m14 = a.m14 + b.m14;
+	_result.m15 = a.m15 + b.m15;
+	return (_result);
+}
+
+/*	[a b] [e f] | [a-e b-f]
+ *	[c d] [g h] | [c-g d-h]
+ * */
+ML_API t_mat4	ml_mat4_sub(t_mat4 a, t_mat4 b) {
+	t_mat4	_result;
+
+	/* 1st. row */
+	_result.m0 = a.m0 - b.m0;
+	_result.m1 = a.m1 - b.m1;
+	_result.m2 = a.m2 - b.m2;
+	_result.m3 = a.m3 - b.m3;
+	
+	/* 2nd. row */
+	_result.m4 = a.m4 - b.m4;
+	_result.m5 = a.m5 - b.m5;
+	_result.m6 = a.m6 - b.m6;
+	_result.m7 = a.m7 - b.m7;
+	
+	/* 3rd. row */
+	_result.m8 = a.m8 - b.m8;
+	_result.m9 = a.m9 - b.m9;
+	_result.m10 = a.m10 - b.m10;
+	_result.m11 = a.m11 - b.m11;
+	
+	/* 4th. row */
+	_result.m12 = a.m12 - b.m12;
+	_result.m13 = a.m13 - b.m13;
+	_result.m14 = a.m14 - b.m14;
+	_result.m15 = a.m15 - b.m15;
+	return (_result);
+}
+
+/*	[a b] [e f] | [ae+bg af+bh]
+ *	[c d] [g h] | [ce+dg cf+dh]
+ * */
+ML_API t_mat4	ml_mat4_mul(t_mat4 a, t_mat4 b) {
+	t_mat4	_result;
+
+	/* 1st. row */
+	_result.m0  = a.m0*b.m0 + a.m1*b.m4 + a.m2*b.m8 + a.m3*b.m12;
+	_result.m1  = a.m0*b.m1 + a.m1*b.m5 + a.m2*b.m9 + a.m3*b.m13;
+	_result.m2  = a.m0*b.m2 + a.m1*b.m6 + a.m2*b.m10 + a.m3*b.m14;
+	_result.m3  = a.m0*b.m3 + a.m1*b.m7 + a.m2*b.m11 + a.m3*b.m15;
+
+	/* 2nd. row */
+	_result.m4  = a.m4*b.m0 + a.m5*b.m4 + a.m6*b.m8 + a.m7*b.m12;
+	_result.m5  = a.m4*b.m1 + a.m5*b.m5 + a.m6*b.m9 + a.m7*b.m13;
+	_result.m6  = a.m4*b.m2 + a.m5*b.m6 + a.m6*b.m10 + a.m7*b.m14;
+	_result.m7  = a.m4*b.m3 + a.m5*b.m7 + a.m6*b.m11 + a.m7*b.m15;
+
+	/* 3rd. row */
+	_result.m8  = a.m8*b.m0 + a.m9*b.m4 + a.m10*b.m8 + a.m11*b.m12;
+	_result.m9  = a.m8*b.m1 + a.m9*b.m5 + a.m10*b.m9 + a.m11*b.m13;
+	_result.m10 = a.m8*b.m2 + a.m9*b.m6 + a.m10*b.m10 + a.m11*b.m14;
+	_result.m11 = a.m8*b.m3 + a.m9*b.m7 + a.m10*b.m11 + a.m11*b.m15;
+
+	/* 4th. row */
+	_result.m12 = a.m12*b.m0 + a.m13*b.m4 + a.m14*b.m8 + a.m15*b.m12;
+	_result.m13 = a.m12*b.m1 + a.m13*b.m5 + a.m14*b.m9 + a.m15*b.m13;
+	_result.m14 = a.m12*b.m2 + a.m13*b.m6 + a.m14*b.m10 + a.m15*b.m14;
+	_result.m15 = a.m12*b.m3 + a.m13*b.m7 + a.m14*b.m11 + a.m15*b.m15;
+	return (_result);
+}
+
+/*	v * [a b] | [av bv]
+ *		[c d] | [cv dv]
+ * */
+ML_API t_mat4	ml_mat4_mulv(t_mat4 m, float v) {
+	t_mat4	_result;
+
+	_result.vec[0] = ml_vec4_mulv(m.vec[0], v);
+	_result.vec[1] = ml_vec4_mulv(m.vec[1], v);
+	_result.vec[2] = ml_vec4_mulv(m.vec[2], v);
+	_result.vec[3] = ml_vec4_mulv(m.vec[3], v);
+	return (_result);
+}
+
+ML_API t_mat4	ml_mat4_ortho(float left, float right, float top, float down, float near, float far) {
+	t_mat4	_result;
+	float	_rl;
+	float	_td;
+	float	_nf;
+
+	_rl = 1.0f / (right - left);
+	_td = 1.0f / (top - down);
+	_nf = 1.0f / (far - near) * -1.0f;
+	_result = ml_mat4_zero();
+	_result.ptr[0][0] = 2.0f * _rl;
+	_result.ptr[1][1] = 2.0f * _td;
+	_result.ptr[2][2] = 2.0f * _nf * -1.0f;
+	_result.ptr[3][0] = (right + left) * _rl * -1.0f;
+	_result.ptr[3][1] = (top + down) * _td * -1.0f;
+	_result.ptr[3][2] = (near + far) * _nf;
+	_result.ptr[3][3] = 1.0f;
+	return (_result);
+}
+
+ML_API t_mat4	ml_mat4_persp(float fov, float aspect, float near, float far) {
+	t_mat4	_result;
+	float	_f;
+	float	_fn;
+	
+	_f = 1.0f / tanf(fov * 0.5f);
+	_fn = 1.0f / (near - far);
+	_result = ml_mat4_zero();
+	_result.ptr[0][0] = _f / aspect;
+	_result.ptr[1][1] = _f;
+	_result.ptr[2][2] = (near - far) * _fn * -1;;
+	_result.ptr[2][3] = 1.0f;
+	_result.ptr[3][2] = 2.0f * near * far * _fn;
+	return (_result);
+}
+
+ML_API bool		ml_mat4_eq(t_mat4 a, t_mat4 b) {
+	return (ml_vec4_eq(a.vec[0], b.vec[0]) &&
+			ml_vec4_eq(a.vec[1], b.vec[1]) &&
+			ml_vec4_eq(a.vec[2], b.vec[2]) &&
+			ml_vec4_eq(a.vec[3], b.vec[3])
+		);
+}
 
 # endif
 #endif 

@@ -90,5 +90,14 @@ int main() {
 			printf("- After ml_swapi: i1 = %d, i2 = %d\n", i1, i2);
 		}
 	} 
+	printf("\n\033[1mSample: RNG\033[0m\n");
+	{
+		for (size_t i = 0; i < 8; i++) {
+			printf("- ml_randi [ -16, 16 ]: %d\n", ml_randi(-16, 16));
+		}
+		for (size_t i = 0; i < 8; i++) {
+			printf("- ml_randf [ -16.0f, 16.0f ]: %f\n", ml_randf(-16, 16));
+		}
+	}
     return (0);
 }

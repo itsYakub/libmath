@@ -10,32 +10,31 @@ int main(void) {
 	t_vec4	v1;
 	t_vec4	v2;
 
-	puts("---");
-
-	v0 = ml_vec4(8.0f, 16.0f, 32.0f, 64.0f);
-	printf("v0: %s\n", __vec4_tostr(v0));
-
-	puts("---");
-
-	v1 = ml_vec4_cpy(v0);
-	printf("v1: %s\n", __vec4_tostr(v1));
-	v1 = ml_vec4_mulv(v1, 2);
-	printf("v1 * 2: %s\n", __vec4_tostr(v1));
-	v1 = ml_vec4_addv(v1, 4);
-	printf("v1 + 2: %s\n", __vec4_tostr(v1));
-	v1 = ml_vec4_divv(v1, 3);
-	printf("v1 / 3: %s\n", __vec4_tostr(v1));
-	v1 = ml_vec4_subv(v1, 1);
-	printf("v1 - 1: %s\n", __vec4_tostr(v1));
-
-	puts("---");
-
-	v2 = ml_vec4_cpy(v0);
-	printf("v2: %s\n", __vec4_tostr(v2));
-	printf("v2 == v0: %s\n", ml_vec4_eq(v2, v0) ? "true" : "false");
-	printf("v2 == v1: %s\n", ml_vec4_eq(v2, v1) ? "true" : "false");
-
-	puts("---");
+	printf("\n\033[1mSample: vectors\033[0m\n");
+	{
+		v0 = ml_vec4(8.0f, 16.0f, 32.0f, 64.0f);
+		printf("- v0: %s\n", __vec4_tostr(v0));
+	}
+	printf("\n\033[1mSample: mathematical operations\033[0m\n");
+	{
+			v1 = ml_vec4_cpy(v0);
+			printf("- v1: %s\n", __vec4_tostr(v1));
+			v1 = ml_vec4_mulv(v1, 2);
+			printf("- v1 * 2: %s\n", __vec4_tostr(v1));
+			v1 = ml_vec4_addv(v1, 4);
+			printf("- v1 + 2: %s\n", __vec4_tostr(v1));
+			v1 = ml_vec4_divv(v1, 3);
+			printf("- v1 / 3: %s\n", __vec4_tostr(v1));
+			v1 = ml_vec4_subv(v1, 1);
+			printf("- v1 - 1: %s\n", __vec4_tostr(v1));
+	}
+	printf("\n\033[1mSample: compare\033[0m\n");
+	{
+		v2 = ml_vec4_cpy(v0);
+		printf("- v2: %s\n", __vec4_tostr(v2));
+		printf("- v2 == v0: %s\n", ml_vec4_eq(v2, v0) ? "true" : "false");
+		printf("- v2 == v1: %s\n", ml_vec4_eq(v2, v1) ? "true" : "false");
+	}
 }
 
 static const char	*__vec4_tostr(t_vec4 v) {

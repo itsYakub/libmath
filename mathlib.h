@@ -14,6 +14,39 @@
 #  endif
 # endif
 
+/*	SECTION: utils
+ * */
+
+# if !defined (ml_min)
+#  define ml_min(a, b) (a < b ? a : b)
+# endif
+# if !defined (ml_max)
+#  define ml_max(a, b) (a > b ? a : b)
+# endif
+# if !defined (ml_abs)
+#  define ml_abs(a) (a * ((a <= 0) - (a > 0)))
+# endif
+# if !defined (ml_round)
+#  define ml_round(a) ((a - (int) a >= 0.5f) ? (int) a + 1 : (int) a)
+# endif
+# if !defined(ml_floor)
+#  define ml_floor(a) ((int) a)
+# endif
+# if !defined (ml_ceil)
+#  define ml_ceil(a) ((a - (int) a == 0.0f) ? a : (int) a + 1)
+# endif
+
+ML_API float	ml_clampf(float, float, float);
+ML_API float	ml_clampf_zo(float);
+ML_API float	ml_lerpf(float, float, float);
+ML_API float	ml_lerpf_zo(float, float, float);
+ML_API void		ml_swapf(float *, float *);
+
+ML_API int		ml_clampi(int, int, int);
+ML_API int		ml_lerpi(int, int, float);
+ML_API int		ml_lerpi_zo(int, int, float);
+ML_API void		ml_swapi(int *, int *);
+
 /*	SECTION: t_vec2
  * */
 
@@ -110,6 +143,33 @@ ML_API t_vec4	ml_vec4_divv(t_vec4, float);
 ML_API bool		ml_vec4_eq(t_vec4, t_vec4);
 
 # if defined (MATHLIB_IMPLEMENTATION)
+
+/*	SECTION: utils
+ * */
+
+ML_API float	ml_clampf(float a, float min, float max) { return (ml_min(ml_max(a, min), max)); }
+ML_API float	ml_clampf_zo(float a) { return (ml_clampf(a, 0.0f, 1.0f)); }
+ML_API float	ml_lerpf(float a, float b, float t) { return (a + t * (b - a)); }
+ML_API float	ml_lerpf_zo(float a, float b, float t) { return (ml_lerpf(a, b, ml_clampf_zo(t))); }
+
+ML_API void	ml_swapf(float *a, float *b) {
+	float	_t;
+
+	_t = *a;
+	*a = *b;
+	*b = _t;
+}
+
+ML_API int	ml_clampi(int a, int min, int max) { return (ml_min(ml_max(a, min), max)); }
+ML_API int	ml_lerpi(int a, int b, float t) { return (a + t * (b - a)); }
+ML_API int	ml_lerpi_zo(int a, int b, float t) { return (ml_lerpi(a, b, ml_clampf_zo(t))); }
+
+ML_API void	ml_swapi(int *a, int *b) {
+	int	_t;
+	_t = *a;
+	*a = *b;
+	*b = _t;
+}
 
 /*	SECTION: t_vec2
  * */

@@ -17,16 +17,26 @@ int main(void) {
 	}
 	printf("\n\033[1mSample: mathematical operations\033[0m\n");
 	{
-			v1 = ml_vec3_cpy(v0);
-			printf("- v1: %s\n", __vec3_tostr(v1));
-			v1 = ml_vec3_mulv(v1, 2);
-			printf("- v1 * 2: %s\n", __vec3_tostr(v1));
-			v1 = ml_vec3_addv(v1, 4);
-			printf("- v1 + 2: %s\n", __vec3_tostr(v1));
-			v1 = ml_vec3_divv(v1, 3);
-			printf("- v1 / 3: %s\n", __vec3_tostr(v1));
-			v1 = ml_vec3_subv(v1, 1);
-			printf("- v1 - 1: %s\n", __vec3_tostr(v1));
+		v1 = ml_vec3_cpy(v0);
+		printf("- v1: %s\n", __vec3_tostr(v1));
+		v1 = ml_vec3_mulv(v1, 2);
+		printf("- v1 * 2: %s\n", __vec3_tostr(v1));
+		v1 = ml_vec3_addv(v1, 4);
+		printf("- v1 + 2: %s\n", __vec3_tostr(v1));
+		v1 = ml_vec3_divv(v1, 3);
+		printf("- v1 / 3: %s\n", __vec3_tostr(v1));
+		v1 = ml_vec3_subv(v1, 1);
+		printf("- v1 - 1: %s\n", __vec3_tostr(v1));
+	}
+	printf("\n\033[1mSample: other operations\033[0m\n");
+	{
+		printf("- v0: %s\n", __vec3_tostr(v0));
+		v1 = ml_vec3_mulv(v0, 2);
+		printf("- v1: %s\n", __vec3_tostr(v1));
+		printf("- ml_vec3_lerp: %s\n", __vec3_tostr(ml_vec3_lerp(v0, v1, 0.5f)));
+		printf("- ml_vec3_dist: %f\n", ml_vec3_dist(v0, v1));
+		printf("- ml_vec3_len: %f\n", ml_vec3_len(v1));
+		printf("- ml_vec3_ang: %f\n", ml_vec3_ang(v0, v1));
 	}
 	printf("\n\033[1mSample: compare\033[0m\n");
 	{

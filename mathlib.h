@@ -689,9 +689,11 @@ ML_API t_mat4	ml_mat4_ortho(float left, float right, float top, float down, floa
 	_result = ml_mat4_zero();
 	_result.ptr[0][0] = 2.0f / (right - left);
 	_result.ptr[1][1] = 2.0f / (top - down);
-	_result.ptr[2][2] = 1.0f;
-	_result.ptr[3][0] = -1.0f * (right + left) / (right - left);
-	_result.ptr[3][1] = -1.0f * (top + down) / (top - down);
+	_result.ptr[2][2] = 2.0f / (far - near);
+	_result.ptr[3][0] = -(left + right) / (right - left);
+	_result.ptr[3][1] = -(top + down) / (top - down);
+	_result.ptr[3][2] = -(far + near) / (far - near);
+	_result.ptr[3][3] = 1.0f;
 	return (_result);
 }
 

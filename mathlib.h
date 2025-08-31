@@ -24,7 +24,7 @@
 #  define ml_max(a, b) (a > b ? a : b)
 # endif
 # if !defined (ml_abs)
-#  define ml_abs(a) (a * ((a <= 0) - (a > 0)))
+#  define ml_abs(a) (a > 0 ? a : -a)
 # endif
 # if !defined (ml_round)
 #  define ml_round(a) ((a - (int) a >= 0.5f) ? (int) a + 1 : (int) a)
@@ -232,10 +232,10 @@ ML_API bool		ml_vec4_eq(t_col, t_col);
 
 union u_mat4 {
 	struct {
-		float	m0,  m1,  m2,  m3;
-		float	m4,  m5,  m6,  m7;
-		float	m8,  m9,  m10, m11;
-		float	m12, m13, m14, m15;
+		float	m0,  m1,  m2,  m3,
+				m4,  m5,  m6,  m7,
+				m8,  m9,  m10, m11,
+				m12, m13, m14, m15;
 	};
 	float		ptr[4][4];
 	t_vec4		vec[4];
@@ -638,17 +638,27 @@ ML_API bool		ml_col_eq(t_col a, t_col b) { return (ml_vec4_eq(a, b)); }
 /* SECTION: t_mat4
  * */
 
-ML_API t_mat4	ml_mat4_zero(void) { return ((t_mat4) { 0.0f, 0.0f, 0.0f, 0.0f,	0.0f, 0.0f, 0.0f, 0.0f,	0.0f, 0.0f, 0.0f, 0.0f,	0.0f, 0.0f, 0.0f, 0.0f } ); }
+ML_API t_mat4	ml_mat4_zero(void) {
+	t_mat4	_result;
+
+	_result = (t_mat4) {
+		.m0 = 0.0f,  .m1 = 0.0f,  .m2 = 0.0f,  .m3 = 0.0f,
+		.m4 = 0.0f,  .m5 = 0.0f,  .m6 = 0.0f,  .m7 = 0.0f,
+		.m8 = 0.0f,  .m9 = 0.0f,  .m10 = 0.0f, .m11 = 0.0f,
+		.m12 = 0.0f, .m13 = 0.0f, .m14 = 0.0f, .m15 = 0.0f,
+	};
+	return (_result);
+}
 
 ML_API t_mat4	ml_mat4_identity(void) {
 	t_mat4	_result;
 
-	_result = (t_mat4) { {
-		1.0f, 0.0f, 0.0f, 0.0f,
-		0.0f, 1.0f, 0.0f, 0.0f,
-		0.0f, 0.0f, 1.0f, 0.0f,
-		0.0f, 0.0f, 0.0f, 1.0f,
-	} };
+	_result = (t_mat4) {
+		.m0 = 1.0f,  .m1 = 0.0f,  .m2 = 0.0f,  .m3 = 0.0f,
+		.m4 = 0.0f,  .m5 = 1.0f,  .m6 = 0.0f,  .m7 = 0.0f,
+		.m8 = 0.0f,  .m9 = 0.0f,  .m10 = 1.0f, .m11 = 0.0f,
+		.m12 = 0.0f, .m13 = 0.0f, .m14 = 0.0f, .m15 = 1.0f,
+	};
 	return (_result);
 }
 

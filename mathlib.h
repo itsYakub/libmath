@@ -14,14 +14,21 @@
 #  endif
 # endif
 
+/* SECTION: constants
+ * */
+
+# if !defined (ML_PI)
+#  define ML_PI 3.1415926535
+# endif
+
 /* SECTION: utils
  * */
 
 # if !defined (ml_min)
-#  define ml_min(a, b) (a < b ? a : b)
+#  define ml_min(a, b) ((int) (a) < (int) (b) ? a : b)
 # endif
 # if !defined (ml_max)
-#  define ml_max(a, b) (a > b ? a : b)
+#  define ml_max(a, b) ((int) (a) > (int) (b) ? a : b)
 # endif
 # if !defined (ml_abs)
 #  define ml_abs(a) (a > 0 ? a : -a)
@@ -34,6 +41,12 @@
 # endif
 # if !defined (ml_ceil)
 #  define ml_ceil(a) ((a - (int) a == 0.0f) ? a : (int) a + 1)
+# endif
+# if !defined (ml_deg2rad)
+#  define ml_deg2rad(a) (a * (ML_PI / 180.0))
+# endif
+# if !defined (ml_rad2deg)
+#  define ml_rad2deg(a) (a * (180.0 / ML_PI))
 # endif
 # if defined (__cplusplus)
 
@@ -111,6 +124,11 @@ union u_vec3 {
 		float	z;
 	};
 	struct {
+		float	w;
+		float	h;
+		float	l;
+	};
+	struct {
 		float	r;
 		float	g;
 		float	b;
@@ -138,6 +156,7 @@ ML_API t_vec3	ml_vec3_clamp_val(t_vec3, float, float);
 ML_API t_vec3	ml_vec3_lerp(t_vec3, t_vec3, float);
 ML_API t_vec3	ml_vec3_lerp_zo(t_vec3, t_vec3, float);
 ML_API t_vec3	ml_vec3_move_towards(t_vec3, t_vec3, float);
+ML_API t_vec3	ml_vec3_cross(t_vec3, t_vec3);
 ML_API t_vec3	ml_vec3_normalize(t_vec3);
 
 ML_API float	ml_vec3_dist(t_vec3, t_vec3);
@@ -145,6 +164,7 @@ ML_API float	ml_vec3_dist_sqr(t_vec3, t_vec3);
 ML_API float	ml_vec3_len(t_vec3);
 ML_API float	ml_vec3_len_sqr(t_vec3);
 ML_API float	ml_vec3_ang(t_vec3, t_vec3);
+ML_API float	ml_vec3_dot(t_vec3, t_vec3);
 
 ML_API bool		ml_vec3_eq(t_vec3, t_vec3);
 
@@ -251,6 +271,7 @@ ML_API t_mat4	ml_mat4_mul(t_mat4, t_mat4);
 ML_API t_mat4	ml_mat4_mulv(t_mat4, float);
 ML_API t_mat4	ml_mat4_ortho(float, float, float, float, float, float);
 ML_API t_mat4	ml_mat4_persp(float, float, float, float);
+ML_API t_mat4	ml_mat4_lookat(t_vec3, t_vec3, t_vec3);
 
 ML_API bool		ml_mat4_eq(t_mat4, t_mat4);
 
@@ -281,6 +302,7 @@ ML_API int	ml_lerpi_zo(int a, int b, float t) { return (ml_lerpi(a, b, ml_clampf
 
 ML_API void	ml_swapi(int *a, int *b) {
 	int	_t;
+
 	_t = *a;
 	*a = *b;
 	*b = _t;
@@ -349,10 +371,10 @@ ML_API t_vec2	ml_vec2_dir(t_vec2 a, t_vec2 b) {
 }
 
 ML_API t_vec2	ml_vec2_move_towards(t_vec2 start, t_vec2 target, float t) {
-	t_vec2	_result;
-	t_vec2	_delta;
-	float	_val;
-	float	_dist;
+	t_vec2	_result,
+			_delta;
+	float	_val,
+			_dist;
 
 	_delta = ml_vec2_sub(target, start);
 	_val = ml_vec2_len_sqr(_delta);
@@ -368,8 +390,8 @@ ML_API t_vec2	ml_vec2_move_towards(t_vec2 start, t_vec2 target, float t) {
 
 ML_API t_vec2	ml_vec2_normalize(t_vec2 v) {
 	t_vec2	_result;
-	float	_len;
-	float	_leninv;
+	float	_len,
+			_leninv;
 
 	_result = ml_vec2(0, 0);
 	_len = ml_vec2_len(v);
@@ -386,8 +408,8 @@ ML_API float	ml_vec2_dist_sqr(t_vec2 a, t_vec2 b) { return ((a.x - b.x) * (a.x -
 ML_API float	ml_vec2_len(t_vec2 a) { return (sqrtf((a.x * a.x) + (a.y * a.y))); }
 ML_API float	ml_vec2_len_sqr(t_vec2 a) { return ((a.x * a.x) + (a.y * a.y)); }
 ML_API float	ml_vec2_ang(t_vec2 a, t_vec2 b) {
-	float	_dot;
-	float	_det;
+	float	_dot,
+			_det;
 
 	_dot = a.x * b.x + a.y * b.y;
 	_det = a.x * b.y - a.y * b.x;
@@ -446,10 +468,10 @@ ML_API t_vec3	ml_vec3_lerp_zo(t_vec3 a, t_vec3 b, float t) {
 }
 
 ML_API t_vec3	ml_vec3_move_towards(t_vec3 start, t_vec3 target, float t) {
-	t_vec3	_result;
-	t_vec3	_delta;
-	float	_val;
-	float	_dist;
+	t_vec3	_result,
+			_delta;
+	float	_val,
+			_dist;
 
 	_delta = ml_vec3_sub(target, start);
 	_val = ml_vec3_len_sqr(_delta);
@@ -464,10 +486,19 @@ ML_API t_vec3	ml_vec3_move_towards(t_vec3 start, t_vec3 target, float t) {
 	return (_result);
 }
 
+ML_API t_vec3	ml_vec3_cross(t_vec3 a, t_vec3 b) {
+	t_vec3	_result;
+	
+	_result.x = a.y * b.z - a.z * b.y;
+	_result.y = a.z * b.x - a.x * b.z;
+	_result.z = a.x * b.y - a.y * b.x;
+	return (_result);
+}
+
 ML_API t_vec3	ml_vec3_normalize(t_vec3 v) {
 	t_vec3	_result;
-	float	_len;
-	float	_leninv;
+	float	_len,
+			_leninv;
 
 	_result = ml_vec3(0, 0, 0);
 	_len = ml_vec3_len(v);
@@ -486,13 +517,16 @@ ML_API float	ml_vec3_len(t_vec3 a) { return (sqrtf((a.x * a.x) + (a.y * a.y) + (
 ML_API float	ml_vec3_len_sqr(t_vec3 a) { return ((a.x * a.x) + (a.y * a.y) + (a.z * a.z)); }
 ML_API float	ml_vec3_ang(t_vec3 a, t_vec3 b) {
 	t_vec3	_cross;
-	float	_dot;
-	float	_len;
+	float	_dot,
+			_len;
 
-	_cross = ml_vec3(a.y * b.z - a.z * b.y, a.z * b.x - a.x * b.z, a.x * b.y - a.y * b.x);
+	_cross = ml_vec3_cross(a, b);
 	_len = ml_vec3_len_sqr(_cross);
 	_dot = ml_vec3_len(_cross);
 	return (atan2(_len, _dot));
+}
+ML_API float	ml_vec3_dot(t_vec3 a, t_vec3 b) {
+	return (a.x * b.x + a.y * b.y + a.z * b.z);
 }
 
 ML_API bool		ml_vec3_eq(t_vec3 a, t_vec3 b) { return (a.x == b.x && a.y == b.y && a.z == b.z); }
@@ -550,10 +584,10 @@ ML_API t_vec4	ml_vec4_lerp_zo(t_vec4 a, t_vec4 b, float t) {
 }
 
 ML_API t_vec4	ml_vec4_move_towards(t_vec4 start, t_vec4 target, float t) {
-	t_vec4	_result;
-	t_vec4	_delta;
-	float	_val;
-	float	_dist;
+	t_vec4	_result,
+			_delta;
+	float	_val,
+			_dist;
 
 	_delta = ml_vec4_sub(target, start);
 	_val = ml_vec4_len_sqr(_delta);
@@ -571,8 +605,8 @@ ML_API t_vec4	ml_vec4_move_towards(t_vec4 start, t_vec4 target, float t) {
 
 ML_API t_vec4	ml_vec4_normalize(t_vec4 v) {
 	t_vec4	_result;
-	float	_len;
-	float	_leninv;
+	float	_len,
+			_leninv;
 
 	_result = ml_vec4(0, 0, 0, 0);
 	_len = ml_vec4_len(v);
@@ -620,7 +654,10 @@ ML_API bool		ml_rect_eq(t_rect a, t_rect b) { return (ml_vec4_eq(a, b)); }
 ML_API t_col	ml_colorf(float r, float g, float b, float a) { return (ml_vec4(r, g, b, a)); }
 ML_API t_col	ml_colorc(unsigned char r, unsigned char g, unsigned char b, unsigned char a) { return (ml_colorf(r / 255.0f, g / 255.0f, b / 255.0f, a / 255.0f)); }
 ML_API t_col	ml_colori(int i) {
-	unsigned char	_r, _g, _b, _a;
+	unsigned char	_r,
+					_g,
+					_b,
+					_a;
 
 	_r = (i >> (8 * 0)) & 0xff;
 	_g = (i >> (8 * 1)) & 0xff;
@@ -788,17 +825,63 @@ ML_API t_mat4	ml_mat4_ortho(float left, float right, float top, float down, floa
 
 ML_API t_mat4	ml_mat4_persp(float fov, float aspect, float near, float far) {
 	t_mat4	_result;
-	float	_f;
-	float	_fn;
-	
-	_f = 1.0f / tanf(fov * 0.5f);
-	_fn = 1.0f / (near - far);
+	double	_top, 
+			_bottom,
+			_left,
+			_right;
+	float	_rl,
+			_tb,
+			_fn;
+
+	_top = near * tan(fov * 0.5);
+	_bottom = -_top;
+	_right = _top * aspect;
+	_left = -_right;
+
+	_rl = (float) (_right - _left);
+	_tb = (float) (_top - _bottom);
+	_fn = (float) (far - near);
+
 	_result = ml_mat4_zero();
-	_result.ptr[0][0] = _f / aspect;
-	_result.ptr[1][1] = _f;
-	_result.ptr[2][2] = (near - far) * _fn * -1;;
-	_result.ptr[2][3] = 1.0f;
-	_result.ptr[3][2] = 2.0f * near * far * _fn;
+	_result.ptr[0][0] = (near * 2.0f) / _rl; 
+	_result.ptr[1][1] = (near * 2.0f) / _tb;
+	_result.ptr[2][0] = (_right + _left) / _rl;
+	_result.ptr[2][1] = (_top + _bottom) / _tb;
+	_result.ptr[2][2] = -(far + near) / _fn;
+	_result.ptr[2][3] = -1.0f;
+	_result.ptr[3][2] = -(far * near * 2.0f) / _fn;
+	return (_result);
+}
+
+ML_API t_mat4	ml_mat4_lookat(t_vec3 eye, t_vec3 center, t_vec3 up) {
+	t_mat4	_result;
+	t_vec3	_f,
+			_u,
+			_s;
+
+	_f = ml_vec3_sub(center, eye);
+	_f = ml_vec3_normalize(_f);
+	_s = ml_vec3_cross(up, _f);
+	_s = ml_vec3_normalize(_s);
+	_u = ml_vec3_cross(_f, _s);
+
+	_result = ml_mat4_zero();
+	_result.ptr[0][0] = _s.x;
+	_result.ptr[0][1] = _u.x;
+	_result.ptr[0][2] = _f.x;
+	_result.ptr[0][3] = 0.0;
+	_result.ptr[1][0] = _s.y;
+	_result.ptr[1][1] = _u.y;
+	_result.ptr[1][2] = _f.y;
+	_result.ptr[1][3] = 0.0;
+	_result.ptr[2][0] = _s.z;
+	_result.ptr[2][1] = _u.z;
+	_result.ptr[2][2] = _f.z;
+	_result.ptr[2][3] = 0.0;
+	_result.ptr[3][0] = -ml_vec3_dot(_s, eye);
+	_result.ptr[3][1] = -ml_vec3_dot(_u, eye);
+	_result.ptr[3][2] = -ml_vec3_dot(_f, eye);
+	_result.ptr[3][3] = 1.0;
 	return (_result);
 }
 

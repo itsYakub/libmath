@@ -247,6 +247,56 @@ ML_API int		ml_col2int(t_col);
 
 ML_API bool		ml_vec4_eq(t_col, t_col);
 
+/* SECTION: t_mat2
+ * */
+
+union u_mat2 {
+	struct {
+		float	m0, m1,
+                m2, m3;
+	};
+	float		ptr[2][2];
+	t_vec2		vec[2];
+};
+
+typedef union u_mat2	t_mat2;
+
+ML_API t_mat2	ml_mat2_zero(void);
+ML_API t_mat2	ml_mat2_identity(void);
+ML_API t_mat2	ml_mat2_add(t_mat2, t_mat2);
+ML_API t_mat2	ml_mat2_sub(t_mat2, t_mat2);
+ML_API t_mat2	ml_mat2_mul(t_mat2, t_mat2);
+ML_API t_mat2	ml_mat2_mulv(t_mat2, float);
+
+ML_API bool		ml_mat2_eq(t_mat2, t_mat2);
+
+/* SECTION: t_mat3
+ * */
+
+union u_mat3 {
+	struct {
+		float	m0, m1, m2,
+                m3, m4, m5,
+                m6, m7, m8;
+	};
+	float		ptr[3][3];
+	t_vec3		vec[3];
+};
+
+typedef union u_mat3	t_mat3;
+
+ML_API t_mat3	ml_mat3_zero(void);
+ML_API t_mat3	ml_mat3_identity(void);
+ML_API t_mat3	ml_mat3_add(t_mat3, t_mat3);
+ML_API t_mat3	ml_mat3_sub(t_mat3, t_mat3);
+ML_API t_mat3	ml_mat3_mul(t_mat3, t_mat3);
+ML_API t_mat3	ml_mat3_mulv(t_mat3, float);
+ML_API t_mat3	ml_mat3_ortho(float, float, float, float, float, float);
+ML_API t_mat3	ml_mat3_persp(float, float, float, float);
+ML_API t_mat3	ml_mat3_lookat(t_vec3, t_vec3, t_vec3);
+
+ML_API bool		ml_mat3_eq(t_mat3, t_mat3);
+
 /* SECTION: t_mat4
  * */
 
@@ -289,11 +339,11 @@ ML_API float	ml_lerpf(float a, float b, float t) { return (a + t * (b - a)); }
 ML_API float	ml_lerpf_zo(float a, float b, float t) { return (ml_lerpf(a, b, ml_clampf_zo(t))); }
 
 ML_API void	ml_swapf(float *a, float *b) {
-	float	_t;
+	float	t;
 
-	_t = *a;
+	t = *a;
 	*a = *b;
-	*b = _t;
+	*b = t;
 }
 
 ML_API int	ml_clampi(int a, int min, int max) { return (ml_min(ml_max(a, min), max)); }
@@ -301,11 +351,11 @@ ML_API int	ml_lerpi(int a, int b, float t) { return (a + t * (b - a)); }
 ML_API int	ml_lerpi_zo(int a, int b, float t) { return (ml_lerpi(a, b, ml_clampf_zo(t))); }
 
 ML_API void	ml_swapi(int *a, int *b) {
-	int	_t;
+	int	t;
 
-	_t = *a;
+	t = *a;
 	*a = *b;
-	*b = _t;
+	*b = t;
 }
 
 ML_API int	ml_randi(int min, int max) {
@@ -371,36 +421,33 @@ ML_API t_vec2	ml_vec2_dir(t_vec2 a, t_vec2 b) {
 }
 
 ML_API t_vec2	ml_vec2_move_towards(t_vec2 start, t_vec2 target, float t) {
-	t_vec2	_result,
-			_delta;
-	float	_val,
-			_dist;
+	t_vec2	result, delta;
+	float	val, dist;
 
-	_delta = ml_vec2_sub(target, start);
-	_val = ml_vec2_len_sqr(_delta);
+	delta = ml_vec2_sub(target, start);
+	val = ml_vec2_len_sqr(delta);
 
-	if (_val == 0.0f || ((t >= 0) && (_val <= t * t))) {
+	if (val == 0.0f || ((t >= 0) && (val <= t * t))) {
 		return (target);
 	}
-	_dist = sqrtf(_val);
-	_result.x = start.x + _delta.x / _dist * t;
-	_result.y = start.y + _delta.y / _dist * t;
-	return (_result);
+	dist = sqrtf(val);
+	result.x = start.x + delta.x / dist * t;
+	result.y = start.y + delta.y / dist * t;
+	return (result);
 }
 
 ML_API t_vec2	ml_vec2_normalize(t_vec2 v) {
-	t_vec2	_result;
-	float	_len,
-			_leninv;
+	t_vec2	result;
+	float	len, leninv;
 
-	_result = ml_vec2(0, 0);
-	_len = ml_vec2_len(v);
-	if (_len > 0) {
-		_leninv = 1.0f / _len;
-		_result.x = v.x * _leninv;
-		_result.y = v.y * _leninv;
+	result = ml_vec2(0, 0);
+	len = ml_vec2_len(v);
+	if (len > 0) {
+		leninv = 1.0f / len;
+		result.x = v.x * leninv;
+		result.y = v.y * leninv;
 	}
-	return (_result);
+	return (result);
 }
 
 ML_API float	ml_vec2_dist(t_vec2 a, t_vec2 b) { return (sqrtf((a.x - b.x) * (a.x - b.x) + (a.y - b.y) * (a.y - b.y))); }
@@ -408,12 +455,11 @@ ML_API float	ml_vec2_dist_sqr(t_vec2 a, t_vec2 b) { return ((a.x - b.x) * (a.x -
 ML_API float	ml_vec2_len(t_vec2 a) { return (sqrtf((a.x * a.x) + (a.y * a.y))); }
 ML_API float	ml_vec2_len_sqr(t_vec2 a) { return ((a.x * a.x) + (a.y * a.y)); }
 ML_API float	ml_vec2_ang(t_vec2 a, t_vec2 b) {
-	float	_dot,
-			_det;
+	float	dot, det;
 
-	_dot = a.x * b.x + a.y * b.y;
-	_det = a.x * b.y - a.y * b.x;
-	return (atan2(_dot, _det));
+	dot = a.x * b.x + a.y * b.y;
+	det = a.x * b.y - a.y * b.x;
+	return (atan2(dot, det));
 }
 
 ML_API bool		ml_vec2_eq(t_vec2 a, t_vec2 b) { return (a.x == b.x && a.y == b.y); }
@@ -468,47 +514,44 @@ ML_API t_vec3	ml_vec3_lerp_zo(t_vec3 a, t_vec3 b, float t) {
 }
 
 ML_API t_vec3	ml_vec3_move_towards(t_vec3 start, t_vec3 target, float t) {
-	t_vec3	_result,
-			_delta;
-	float	_val,
-			_dist;
+	t_vec3	result, delta;
+	float	val, dist;
 
-	_delta = ml_vec3_sub(target, start);
-	_val = ml_vec3_len_sqr(_delta);
+	delta = ml_vec3_sub(target, start);
+	val = ml_vec3_len_sqr(delta);
 
-	if (_val == 0.0f || ((t >= 0) && (_val <= t * t))) {
+	if (val == 0.0f || ((t >= 0) && (val <= t * t))) {
 		return (target);
 	}
-	_dist = sqrtf(_val);
-	_result.x = start.x + _delta.x / _dist * t;
-	_result.y = start.y + _delta.y / _dist * t;
-	_result.z = start.z + _delta.z / _dist * t;
-	return (_result);
+	dist = sqrtf(val);
+	result.x = start.x + delta.x / dist * t;
+	result.y = start.y + delta.y / dist * t;
+	result.z = start.z + delta.z / dist * t;
+	return (result);
 }
 
 ML_API t_vec3	ml_vec3_cross(t_vec3 a, t_vec3 b) {
-	t_vec3	_result;
+	t_vec3	result;
 	
-	_result.x = a.y * b.z - a.z * b.y;
-	_result.y = a.z * b.x - a.x * b.z;
-	_result.z = a.x * b.y - a.y * b.x;
-	return (_result);
+	result.x = a.y * b.z - a.z * b.y;
+	result.y = a.z * b.x - a.x * b.z;
+	result.z = a.x * b.y - a.y * b.x;
+	return (result);
 }
 
 ML_API t_vec3	ml_vec3_normalize(t_vec3 v) {
-	t_vec3	_result;
-	float	_len,
-			_leninv;
+	t_vec3	result;
+	float	len, leninv;
 
-	_result = ml_vec3(0, 0, 0);
-	_len = ml_vec3_len(v);
-	if (_len > 0) {
-		_leninv = 1.0f / _len;
-		_result.x = v.x * _leninv;
-		_result.y = v.y * _leninv;
-		_result.z = v.z * _leninv;
+	result = ml_vec3(0, 0, 0);
+	len = ml_vec3_len(v);
+	if (len > 0) {
+		leninv = 1.0f / len;
+		result.x = v.x * leninv;
+		result.y = v.y * leninv;
+		result.z = v.z * leninv;
 	}
-	return (_result);
+	return (result);
 }
 
 ML_API float	ml_vec3_dist(t_vec3 a, t_vec3 b) { return (sqrtf((a.x - b.x) * (a.x - b.x) + (a.y - b.y) * (a.y - b.y) + (a.z - b.z) * (a.z - b.z))); }
@@ -516,14 +559,13 @@ ML_API float	ml_vec3_dist_sqr(t_vec3 a, t_vec3 b) { return ((a.x - b.x) * (a.x -
 ML_API float	ml_vec3_len(t_vec3 a) { return (sqrtf((a.x * a.x) + (a.y * a.y) + (a.z * a.z))); }
 ML_API float	ml_vec3_len_sqr(t_vec3 a) { return ((a.x * a.x) + (a.y * a.y) + (a.z * a.z)); }
 ML_API float	ml_vec3_ang(t_vec3 a, t_vec3 b) {
-	t_vec3	_cross;
-	float	_dot,
-			_len;
+	t_vec3	cross;
+	float	dot, len;
 
-	_cross = ml_vec3_cross(a, b);
-	_len = ml_vec3_len_sqr(_cross);
-	_dot = ml_vec3_len(_cross);
-	return (atan2(_len, _dot));
+	cross = ml_vec3_cross(a, b);
+	len = ml_vec3_len_sqr(cross);
+	dot = ml_vec3_len(cross);
+	return (atan2(len, dot));
 }
 ML_API float	ml_vec3_dot(t_vec3 a, t_vec3 b) {
 	return (a.x * b.x + a.y * b.y + a.z * b.z);
@@ -584,40 +626,37 @@ ML_API t_vec4	ml_vec4_lerp_zo(t_vec4 a, t_vec4 b, float t) {
 }
 
 ML_API t_vec4	ml_vec4_move_towards(t_vec4 start, t_vec4 target, float t) {
-	t_vec4	_result,
-			_delta;
-	float	_val,
-			_dist;
+	t_vec4	result, delta;
+	float	val, dist;
 
-	_delta = ml_vec4_sub(target, start);
-	_val = ml_vec4_len_sqr(_delta);
+	delta = ml_vec4_sub(target, start);
+	val = ml_vec4_len_sqr(delta);
 
-	if (_val == 0.0f || ((t >= 0) && (_val <= t * t))) {
+	if (val == 0.0f || ((t >= 0) && (val <= t * t))) {
 		return (target);
 	}
-	_dist = sqrtf(_val);
-	_result.x = start.x + _delta.x / _dist * t;
-	_result.y = start.y + _delta.y / _dist * t;
-	_result.z = start.z + _delta.z / _dist * t;
-	_result.w = start.w + _delta.w / _dist * t;
-	return (_result);
+	dist = sqrtf(val);
+	result.x = start.x + delta.x / dist * t;
+	result.y = start.y + delta.y / dist * t;
+	result.z = start.z + delta.z / dist * t;
+	result.w = start.w + delta.w / dist * t;
+	return (result);
 }
 
 ML_API t_vec4	ml_vec4_normalize(t_vec4 v) {
-	t_vec4	_result;
-	float	_len,
-			_leninv;
+	t_vec4	result;
+	float	len, leninv;
 
-	_result = ml_vec4(0, 0, 0, 0);
-	_len = ml_vec4_len(v);
-	if (_len > 0) {
-		_leninv = 1.0f / _len;
-		_result.x = v.x * _leninv;
-		_result.y = v.y * _leninv;
-		_result.z = v.z * _leninv;
-		_result.w = v.w * _leninv;
+	result = ml_vec4(0, 0, 0, 0);
+	len = ml_vec4_len(v);
+	if (len > 0) {
+		leninv = 1.0f / len;
+		result.x = v.x * leninv;
+		result.y = v.y * leninv;
+		result.z = v.z * leninv;
+		result.w = v.w * leninv;
 	}
-	return (_result);
+	return (result);
 }
 
 ML_API float	ml_vec4_dist(t_vec4 a, t_vec4 b) { return (sqrtf((a.x - b.x) * (a.x - b.x) + (a.y - b.y) * (a.y - b.y) + (a.z - b.z) * (a.z - b.z) + (a.w - b.w) * (a.w - b.w))); }
@@ -654,16 +693,13 @@ ML_API bool		ml_rect_eq(t_rect a, t_rect b) { return (ml_vec4_eq(a, b)); }
 ML_API t_col	ml_colorf(float r, float g, float b, float a) { return (ml_vec4(r, g, b, a)); }
 ML_API t_col	ml_colorc(unsigned char r, unsigned char g, unsigned char b, unsigned char a) { return (ml_colorf(r / 255.0f, g / 255.0f, b / 255.0f, a / 255.0f)); }
 ML_API t_col	ml_colori(int i) {
-	unsigned char	_r,
-					_g,
-					_b,
-					_a;
+	unsigned char	r, g, b, a;
 
-	_r = (i >> (8 * 0)) & 0xff;
-	_g = (i >> (8 * 1)) & 0xff;
-	_b = (i >> (8 * 2)) & 0xff;
-	_a = (i >> (8 * 3)) & 0xff;
-	return (ml_colorc(_r, _g, _b, _a));
+	r = (i >> (8 * 0)) & 0xff;
+	g = (i >> (8 * 1)) & 0xff;
+	b = (i >> (8 * 2)) & 0xff;
+	a = (i >> (8 * 3)) & 0xff;
+	return (ml_colorc(r, g, b, a));
 }
 
 ML_API int		ml_col2int(t_col col) {
@@ -672,217 +708,335 @@ ML_API int		ml_col2int(t_col col) {
 
 ML_API bool		ml_col_eq(t_col a, t_col b) { return (ml_vec4_eq(a, b)); }
 
+/* SECTION: t_mat2
+ * */
+
+ML_API t_mat2	ml_mat2_zero(void) {
+	t_mat2	result;
+
+    result.vec[0] = ml_vec2_zero();
+    result.vec[1] = ml_vec2_zero();
+	return (result);
+}
+
+ML_API t_mat2	ml_mat2_identity(void) {
+	t_mat2	result;
+
+    result.vec[0] = ml_vec2(1.0, 0.0);
+    result.vec[1] = ml_vec2(0.0, 1.0);
+    return (result);
+}
+
+/*	[a b] + [e f] = [a+e b+f]
+ *	[c d]   [g h]   [c+g d+h]
+ * */
+
+ML_API t_mat2	ml_mat2_add(t_mat2 a, t_mat2 b) {
+	t_mat2	result;
+
+    result.vec[0] = ml_vec2_add(a.vec[0], b.vec[0]);
+    result.vec[1] = ml_vec2_add(a.vec[1], b.vec[1]);
+	return (result);
+}
+
+/*	[a b] - [e f] = [a-e b-f]
+ *	[c d]   [g h]   [c-g d-h]
+ * */
+ML_API t_mat2	ml_mat2_sub(t_mat2 a, t_mat2 b) {
+	t_mat2	result;
+
+    result.vec[0] = ml_vec2_sub(a.vec[0], b.vec[0]);
+    result.vec[1] = ml_vec2_sub(a.vec[1], b.vec[1]);
+	return (result);
+}
+
+/*	[a b] * [e f] = [ae+bg af+bh]
+ *	[c d]   [g h]   [ce+dg cf+dh]
+ * */
+ML_API t_mat2	ml_mat2_mul(t_mat2 a, t_mat2 b) {
+	t_mat2	result;
+
+    result.m0 = a.m0 * b.m0 + a.m1 * b.m2;
+    result.m1 = a.m0 * b.m1 + a.m1 * b.m3;
+    
+    result.m2 = a.m2 * b.m0 + a.m3 * b.m2;
+    result.m3 = a.m2 * b.m1 + a.m3 * b.m3;
+	return (result);
+}
+
+/*	v * [a b] = [av bv]
+ *		[c d] = [cv dv]
+ * */
+ML_API t_mat2	ml_mat2_mulv(t_mat2 m, float v) {
+	t_mat2	result;
+
+	result.vec[0] = ml_vec2_mulv(m.vec[0], v);
+	result.vec[1] = ml_vec2_mulv(m.vec[1], v);
+	return (result);
+}
+
+ML_API bool		ml_mat2_eq(t_mat2 a, t_mat2 b) {
+	return (ml_vec2_eq(a.vec[0], b.vec[0]) &&
+			ml_vec2_eq(a.vec[1], b.vec[1])
+		);
+}
+
+/* SECTION: t_mat3
+ * */
+
+ML_API t_mat3	ml_mat3_zero(void) {
+	t_mat3	result;
+
+    result.vec[0] = ml_vec3_zero();
+    result.vec[1] = ml_vec3_zero();
+    result.vec[2] = ml_vec3_zero();
+	return (result);
+}
+
+ML_API t_mat3	ml_mat3_identity(void) {
+	t_mat3	result;
+
+    result.vec[0] = ml_vec3(1.0, 0.0, 0.0);
+    result.vec[1] = ml_vec3(0.0, 1.0, 0.0);
+    result.vec[2] = ml_vec3(0.0, 0.0, 1.0);
+    return (result);
+}
+
+/*	[a b] + [e f] = [a+e b+f]
+ *	[c d]   [g h]   [c+g d+h]
+ * */
+
+ML_API t_mat3	ml_mat3_add(t_mat3 a, t_mat3 b) {
+	t_mat3	result;
+
+    result.vec[0] = ml_vec3_add(a.vec[0], b.vec[0]);
+    result.vec[1] = ml_vec3_add(a.vec[1], b.vec[1]);
+    result.vec[2] = ml_vec3_add(a.vec[2], b.vec[2]);
+	return (result);
+}
+
+/*	[a b] - [e f] = [a-e b-f]
+ *	[c d]   [g h]   [c-g d-h]
+ * */
+ML_API t_mat3	ml_mat3_sub(t_mat3 a, t_mat3 b) {
+	t_mat3	result;
+
+    result.vec[0] = ml_vec3_sub(a.vec[0], b.vec[0]);
+    result.vec[1] = ml_vec3_sub(a.vec[1], b.vec[1]);
+    result.vec[2] = ml_vec3_sub(a.vec[2], b.vec[2]);
+	return (result);
+}
+
+/*	[a b] * [e f] = [ae+bg af+bh]
+ *	[c d]   [g h]   [ce+dg cf+dh]
+ * */
+ML_API t_mat3	ml_mat3_mul(t_mat3 a, t_mat3 b) {
+	t_mat3	result;
+
+    result.m0 = a.m0 * b.m0 + a.m1 * b.m3 + a.m2 * b.m6;
+    result.m1 = a.m0 * b.m1 + a.m1 * b.m4 + a.m2 * b.m7;
+    result.m2 = a.m0 * b.m2 + a.m1 * b.m5 + a.m2 * b.m8;
+    
+    result.m3 = a.m3 * b.m0 + a.m4 * b.m3 + a.m5 * b.m6;
+    result.m4 = a.m3 * b.m1 + a.m4 * b.m4 + a.m5 * b.m7;
+    result.m5 = a.m3 * b.m2 + a.m4 * b.m5 + a.m5 * b.m8;
+    
+    result.m6 = a.m6 * b.m0 + a.m7 * b.m3 + a.m8 * b.m6;
+    result.m7 = a.m6 * b.m1 + a.m7 * b.m4 + a.m8 * b.m7;
+    result.m8 = a.m6 * b.m2 + a.m7 * b.m5 + a.m8 * b.m8;
+	return (result);
+}
+
+/*	v * [a b] = [av bv]
+ *		[c d] = [cv dv]
+ * */
+ML_API t_mat3	ml_mat3_mulv(t_mat3 m, float v) {
+	t_mat3	result;
+
+	result.vec[0] = ml_vec3_mulv(m.vec[0], v);
+	result.vec[1] = ml_vec3_mulv(m.vec[1], v);
+	result.vec[2] = ml_vec3_mulv(m.vec[2], v);
+	return (result);
+}
+
+ML_API bool		ml_mat3_eq(t_mat3 a, t_mat3 b) {
+	return (ml_vec3_eq(a.vec[0], b.vec[0]) &&
+			ml_vec3_eq(a.vec[1], b.vec[1]) &&
+			ml_vec3_eq(a.vec[2], b.vec[2])
+		);
+}
+
 /* SECTION: t_mat4
  * */
 
 ML_API t_mat4	ml_mat4_zero(void) {
-	t_mat4	_result;
+	t_mat4	result;
 
-	_result = (t_mat4) {
-		.m0 = 0.0f,  .m1 = 0.0f,  .m2 = 0.0f,  .m3 = 0.0f,
-		.m4 = 0.0f,  .m5 = 0.0f,  .m6 = 0.0f,  .m7 = 0.0f,
-		.m8 = 0.0f,  .m9 = 0.0f,  .m10 = 0.0f, .m11 = 0.0f,
-		.m12 = 0.0f, .m13 = 0.0f, .m14 = 0.0f, .m15 = 0.0f,
-	};
-	return (_result);
+    result.vec[0] = ml_vec4_zero();
+    result.vec[1] = ml_vec4_zero();
+    result.vec[2] = ml_vec4_zero();
+    result.vec[3] = ml_vec4_zero();
+	return (result);
 }
 
 ML_API t_mat4	ml_mat4_identity(void) {
-	t_mat4	_result;
+	t_mat4	result;
 
-	_result = (t_mat4) {
-		.m0 = 1.0f,  .m1 = 0.0f,  .m2 = 0.0f,  .m3 = 0.0f,
-		.m4 = 0.0f,  .m5 = 1.0f,  .m6 = 0.0f,  .m7 = 0.0f,
-		.m8 = 0.0f,  .m9 = 0.0f,  .m10 = 1.0f, .m11 = 0.0f,
-		.m12 = 0.0f, .m13 = 0.0f, .m14 = 0.0f, .m15 = 1.0f,
-	};
-	return (_result);
+    result.vec[0] = ml_vec4(1.0, 0.0, 0.0, 0.0);
+    result.vec[1] = ml_vec4(0.0, 1.0, 0.0, 0.0);
+    result.vec[2] = ml_vec4(0.0, 0.0, 1.0, 0.0);
+    result.vec[3] = ml_vec4(0.0, 0.0, 0.0, 1.0);
+    return (result);
 }
 
-/*	[a b] [e f] | [a+e b+f]
- *	[c d] [g h] | [c+g d+h]
+/*	[a b] + [e f] = [a+e b+f]
+ *	[c d]   [g h]   [c+g d+h]
  * */
 
 ML_API t_mat4	ml_mat4_add(t_mat4 a, t_mat4 b) {
-	t_mat4	_result;
+	t_mat4	result;
 
-	/* 1st. row */
-	_result.m0 = a.m0 + b.m0;
-	_result.m1 = a.m1 + b.m1;
-	_result.m2 = a.m2 + b.m2;
-	_result.m3 = a.m3 + b.m3;
-	
-	/* 2nd. row */
-	_result.m4 = a.m4 + b.m4;
-	_result.m5 = a.m5 + b.m5;
-	_result.m6 = a.m6 + b.m6;
-	_result.m7 = a.m7 + b.m7;
-	
-	/* 3rd. row */
-	_result.m8 = a.m8 + b.m8;
-	_result.m9 = a.m9 + b.m9;
-	_result.m10 = a.m10 + b.m10;
-	_result.m11 = a.m11 + b.m11;
-	
-	/* 4th. row */
-	_result.m12 = a.m12 + b.m12;
-	_result.m13 = a.m13 + b.m13;
-	_result.m14 = a.m14 + b.m14;
-	_result.m15 = a.m15 + b.m15;
-	return (_result);
+	result.vec[0] = ml_vec4_add(a.vec[0], b.vec[0]);
+	result.vec[1] = ml_vec4_add(a.vec[1], b.vec[1]);
+	result.vec[2] = ml_vec4_add(a.vec[2], b.vec[2]);
+	result.vec[3] = ml_vec4_add(a.vec[3], b.vec[3]);
+    return (result);
 }
 
-/*	[a b] [e f] | [a-e b-f]
- *	[c d] [g h] | [c-g d-h]
+/*	[a b] - [e f] = [a-e b-f]
+ *	[c d]   [g h]   [c-g d-h]
  * */
 ML_API t_mat4	ml_mat4_sub(t_mat4 a, t_mat4 b) {
-	t_mat4	_result;
+	t_mat4	result;
 
-	/* 1st. row */
-	_result.m0 = a.m0 - b.m0;
-	_result.m1 = a.m1 - b.m1;
-	_result.m2 = a.m2 - b.m2;
-	_result.m3 = a.m3 - b.m3;
-	
-	/* 2nd. row */
-	_result.m4 = a.m4 - b.m4;
-	_result.m5 = a.m5 - b.m5;
-	_result.m6 = a.m6 - b.m6;
-	_result.m7 = a.m7 - b.m7;
-	
-	/* 3rd. row */
-	_result.m8 = a.m8 - b.m8;
-	_result.m9 = a.m9 - b.m9;
-	_result.m10 = a.m10 - b.m10;
-	_result.m11 = a.m11 - b.m11;
-	
-	/* 4th. row */
-	_result.m12 = a.m12 - b.m12;
-	_result.m13 = a.m13 - b.m13;
-	_result.m14 = a.m14 - b.m14;
-	_result.m15 = a.m15 - b.m15;
-	return (_result);
+	result.vec[0] = ml_vec4_sub(a.vec[0], b.vec[0]);
+	result.vec[1] = ml_vec4_sub(a.vec[1], b.vec[1]);
+	result.vec[2] = ml_vec4_sub(a.vec[2], b.vec[2]);
+	result.vec[3] = ml_vec4_sub(a.vec[3], b.vec[3]);
+	return (result);
 }
 
-/*	[a b] [e f] | [ae+bg af+bh]
- *	[c d] [g h] | [ce+dg cf+dh]
+/*	[a b] * [e f] = [ae+bg af+bh]
+ *	[c d]   [g h]   [ce+dg cf+dh]
  * */
 ML_API t_mat4	ml_mat4_mul(t_mat4 a, t_mat4 b) {
-	t_mat4	_result;
+	t_mat4	result;
 
 	/* 1st. row */
-	_result.m0  = a.m0*b.m0 + a.m1*b.m4 + a.m2*b.m8 + a.m3*b.m12;
-	_result.m1  = a.m0*b.m1 + a.m1*b.m5 + a.m2*b.m9 + a.m3*b.m13;
-	_result.m2  = a.m0*b.m2 + a.m1*b.m6 + a.m2*b.m10 + a.m3*b.m14;
-	_result.m3  = a.m0*b.m3 + a.m1*b.m7 + a.m2*b.m11 + a.m3*b.m15;
+	result.m0  = a.m0 * b.m0 + a.m1 * b.m4 + a.m2 * b.m8  + a.m3 * b.m12;
+	result.m1  = a.m0 * b.m1 + a.m1 * b.m5 + a.m2 * b.m9  + a.m3 * b.m13;
+	result.m2  = a.m0 * b.m2 + a.m1 * b.m6 + a.m2 * b.m10 + a.m3 * b.m14;
+	result.m3  = a.m0 * b.m3 + a.m1 * b.m7 + a.m2 * b.m11 + a.m3 * b.m15;
 
 	/* 2nd. row */
-	_result.m4  = a.m4*b.m0 + a.m5*b.m4 + a.m6*b.m8 + a.m7*b.m12;
-	_result.m5  = a.m4*b.m1 + a.m5*b.m5 + a.m6*b.m9 + a.m7*b.m13;
-	_result.m6  = a.m4*b.m2 + a.m5*b.m6 + a.m6*b.m10 + a.m7*b.m14;
-	_result.m7  = a.m4*b.m3 + a.m5*b.m7 + a.m6*b.m11 + a.m7*b.m15;
+	result.m4  = a.m4 * b.m0 + a.m5 * b.m4 + a.m6 * b.m8  + a.m7 * b.m12;
+	result.m5  = a.m4 * b.m1 + a.m5 * b.m5 + a.m6 * b.m9  + a.m7 * b.m13;
+	result.m6  = a.m4 * b.m2 + a.m5 * b.m6 + a.m6 * b.m10 + a.m7 * b.m14;
+	result.m7  = a.m4 * b.m3 + a.m5 * b.m7 + a.m6 * b.m11 + a.m7 * b.m15;
 
 	/* 3rd. row */
-	_result.m8  = a.m8*b.m0 + a.m9*b.m4 + a.m10*b.m8 + a.m11*b.m12;
-	_result.m9  = a.m8*b.m1 + a.m9*b.m5 + a.m10*b.m9 + a.m11*b.m13;
-	_result.m10 = a.m8*b.m2 + a.m9*b.m6 + a.m10*b.m10 + a.m11*b.m14;
-	_result.m11 = a.m8*b.m3 + a.m9*b.m7 + a.m10*b.m11 + a.m11*b.m15;
+	result.m8  = a.m8 * b.m0 + a.m9 * b.m4 + a.m10 * b.m8  + a.m11 * b.m12;
+	result.m9  = a.m8 * b.m1 + a.m9 * b.m5 + a.m10 * b.m9  + a.m11 * b.m13;
+	result.m10 = a.m8 * b.m2 + a.m9 * b.m6 + a.m10 * b.m10 + a.m11 * b.m14;
+	result.m11 = a.m8 * b.m3 + a.m9 * b.m7 + a.m10 * b.m11 + a.m11 * b.m15;
 
 	/* 4th. row */
-	_result.m12 = a.m12*b.m0 + a.m13*b.m4 + a.m14*b.m8 + a.m15*b.m12;
-	_result.m13 = a.m12*b.m1 + a.m13*b.m5 + a.m14*b.m9 + a.m15*b.m13;
-	_result.m14 = a.m12*b.m2 + a.m13*b.m6 + a.m14*b.m10 + a.m15*b.m14;
-	_result.m15 = a.m12*b.m3 + a.m13*b.m7 + a.m14*b.m11 + a.m15*b.m15;
-	return (_result);
+	result.m12 = a.m12 * b.m0 + a.m13 * b.m4 + a.m14 * b.m8  + a.m15 * b.m12;
+	result.m13 = a.m12 * b.m1 + a.m13 * b.m5 + a.m14 * b.m9  + a.m15 * b.m13;
+	result.m14 = a.m12 * b.m2 + a.m13 * b.m6 + a.m14 * b.m10 + a.m15 * b.m14;
+	result.m15 = a.m12 * b.m3 + a.m13 * b.m7 + a.m14 * b.m11 + a.m15 * b.m15;
+	return (result);
 }
 
-/*	v * [a b] | [av bv]
- *		[c d] | [cv dv]
+/*	v * [a b] = [av bv]
+ *		[c d] = [cv dv]
  * */
 ML_API t_mat4	ml_mat4_mulv(t_mat4 m, float v) {
-	t_mat4	_result;
+	t_mat4	result;
 
-	_result.vec[0] = ml_vec4_mulv(m.vec[0], v);
-	_result.vec[1] = ml_vec4_mulv(m.vec[1], v);
-	_result.vec[2] = ml_vec4_mulv(m.vec[2], v);
-	_result.vec[3] = ml_vec4_mulv(m.vec[3], v);
-	return (_result);
+	result.vec[0] = ml_vec4_mulv(m.vec[0], v);
+	result.vec[1] = ml_vec4_mulv(m.vec[1], v);
+	result.vec[2] = ml_vec4_mulv(m.vec[2], v);
+	result.vec[3] = ml_vec4_mulv(m.vec[3], v);
+	return (result);
 }
 
 ML_API t_mat4	ml_mat4_ortho(float left, float right, float top, float down, float near, float far) {
-	t_mat4	_result;
+	t_mat4	result;
 
-	_result = ml_mat4_zero();
-	_result.ptr[0][0] = 2.0f / (right - left);
-	_result.ptr[1][1] = 2.0f / (top - down);
-	_result.ptr[2][2] = 2.0f / (far - near);
-	_result.ptr[3][0] = -(left + right) / (right - left);
-	_result.ptr[3][1] = -(top + down) / (top - down);
-	_result.ptr[3][2] = -(far + near) / (far - near);
-	_result.ptr[3][3] = 1.0f;
-	return (_result);
+	result = ml_mat4_zero();
+    result.ptr[0][0] = 2.0f / (right - left);
+	
+    result.ptr[1][1] = 2.0f / (top - down);
+	
+    result.ptr[2][2] = 2.0f / (far - near);
+	
+    result.ptr[3][0] = -(left + right) / (right - left);
+	result.ptr[3][1] = -(top + down) / (top - down);
+	result.ptr[3][2] = -(far + near) / (far - near);
+	result.ptr[3][3] = 1.0f;
+	return (result);
 }
 
 ML_API t_mat4	ml_mat4_persp(float fov, float aspect, float near, float far) {
-	t_mat4	_result;
-	double	_top, 
-			_bottom,
-			_left,
-			_right;
-	float	_rl,
-			_tb,
-			_fn;
+	t_mat4	result;
+	double	top, bottom, left, right;
+	float	rl, tb, fn;
 
-	_top = near * tan(fov * 0.5);
-	_bottom = -_top;
-	_right = _top * aspect;
-	_left = -_right;
+	top = near * tan(fov * 0.5);
+	bottom = -top;
+	right = top * aspect;
+	left = -right;
 
-	_rl = (float) (_right - _left);
-	_tb = (float) (_top - _bottom);
-	_fn = (float) (far - near);
+	rl = (float) (right - left);
+	tb = (float) (top - bottom);
+	fn = (float) (far - near);
 
-	_result = ml_mat4_zero();
-	_result.ptr[0][0] = (near * 2.0f) / _rl; 
-	_result.ptr[1][1] = (near * 2.0f) / _tb;
-	_result.ptr[2][0] = (_right + _left) / _rl;
-	_result.ptr[2][1] = (_top + _bottom) / _tb;
-	_result.ptr[2][2] = -(far + near) / _fn;
-	_result.ptr[2][3] = -1.0f;
-	_result.ptr[3][2] = -(far * near * 2.0f) / _fn;
-	return (_result);
+	result = ml_mat4_zero();
+	result.ptr[0][0] = (near * 2.0f) / rl; 
+	
+    result.ptr[1][1] = (near * 2.0f) / tb;
+	
+    result.ptr[2][0] = (right + left) / rl;
+	result.ptr[2][1] = (top + bottom) / tb;
+	result.ptr[2][2] = -(far + near) / fn;
+	result.ptr[2][3] = -1.0f;
+	
+    result.ptr[3][2] = -(far * near * 2.0f) / fn;
+	return (result);
 }
 
 ML_API t_mat4	ml_mat4_lookat(t_vec3 eye, t_vec3 center, t_vec3 up) {
-	t_mat4	_result;
-	t_vec3	_f,
-			_u,
-			_s;
+	t_mat4	result;
+	t_vec3	f, u, s;
 
-	_f = ml_vec3_sub(center, eye);
-	_f = ml_vec3_normalize(_f);
-	_s = ml_vec3_cross(up, _f);
-	_s = ml_vec3_normalize(_s);
-	_u = ml_vec3_cross(_f, _s);
+	f = ml_vec3_sub(center, eye);
+	f = ml_vec3_normalize(f);
+	s = ml_vec3_cross(up, f);
+	s = ml_vec3_normalize(s);
+	u = ml_vec3_cross(f, s);
 
-	_result = ml_mat4_zero();
-	_result.ptr[0][0] = _s.x;
-	_result.ptr[0][1] = _u.x;
-	_result.ptr[0][2] = _f.x;
-	_result.ptr[0][3] = 0.0;
-	_result.ptr[1][0] = _s.y;
-	_result.ptr[1][1] = _u.y;
-	_result.ptr[1][2] = _f.y;
-	_result.ptr[1][3] = 0.0;
-	_result.ptr[2][0] = _s.z;
-	_result.ptr[2][1] = _u.z;
-	_result.ptr[2][2] = _f.z;
-	_result.ptr[2][3] = 0.0;
-	_result.ptr[3][0] = -ml_vec3_dot(_s, eye);
-	_result.ptr[3][1] = -ml_vec3_dot(_u, eye);
-	_result.ptr[3][2] = -ml_vec3_dot(_f, eye);
-	_result.ptr[3][3] = 1.0;
-	return (_result);
+	result = ml_mat4_zero();
+	result.ptr[0][0] = s.x;
+	result.ptr[0][1] = u.x;
+	result.ptr[0][2] = f.x;
+	result.ptr[0][3] = 0.0;
+	
+    result.ptr[1][0] = s.y;
+	result.ptr[1][1] = u.y;
+	result.ptr[1][2] = f.y;
+	result.ptr[1][3] = 0.0;
+	
+    result.ptr[2][0] = s.z;
+	result.ptr[2][1] = u.z;
+	result.ptr[2][2] = f.z;
+	result.ptr[2][3] = 0.0;
+	
+    result.ptr[3][0] = -ml_vec3_dot(s, eye);
+	result.ptr[3][1] = -ml_vec3_dot(u, eye);
+	result.ptr[3][2] = -ml_vec3_dot(f, eye);
+	result.ptr[3][3] = 1.0;
+	return (result);
 }
 
 ML_API bool		ml_mat4_eq(t_mat4 a, t_mat4 b) {

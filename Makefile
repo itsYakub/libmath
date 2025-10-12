@@ -6,7 +6,13 @@ TARGET		= $(MK_ROOT)$(MK_NAME).h
 
 # ========
 
-install :
+.PHONY : all
+
+all : install
+
+.PHONY : install
+
+install : remove
 	mkdir /usr/local/include/$(MK_NAME)/
 	cp -f $(TARGET) /usr/local/include/$(MK_NAME)/
 	ln -s /usr/local/include/$(MK_NAME)/$(MK_NAME).h /usr/local/include/$(MK_NAME).h

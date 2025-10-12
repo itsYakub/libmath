@@ -1,29 +1,35 @@
 #if defined (__cplusplus)
 # pragma once
-#endif
+#endif /* __cplusplus */
 #if !defined _mathlib_h_
 # define _mathlib_h_
 # if !defined (__cplusplus)
 #  include <stdbool.h>
-# endif
+# endif /* __cplusplus */
 # if !defined (ML_API)
 #  if defined (__cplusplus)
 #   define ML_API extern "C"
 #  else
 #   define ML_API extern
-#  endif
-# endif
+#  endif /* __cplusplus */
+# endif /* ML_API */
 
 /* SECTION: constants
- * */
+ * * * * * * * * * * */
 
 # if !defined (ML_PI)
 #  define ML_PI 3.1415926535
-# endif
+# endif /* ML_PI */
+# if !defined (ml_deg2rad)
+#  define ml_deg2rad(a) (a * (ML_PI / 180.0))
+# endif /* ml_deg2rad */
+# if !defined (ml_rad2deg)
+#  define ml_rad2deg(a) (a * (180.0 / ML_PI))
+# endif /* ml_rad2deg */
 
-/* SECTION: utils
+/* TODO(yakub):
+ *  Replace those with normal functions
  * */
-
 # if !defined (ml_min)
 #  define ml_min(a, b) ((int) (a) < (int) (b) ? a : b)
 # endif
@@ -42,34 +48,31 @@
 # if !defined (ml_ceil)
 #  define ml_ceil(a) ((a - (int) a == 0.0f) ? a : (int) a + 1)
 # endif
-# if !defined (ml_deg2rad)
-#  define ml_deg2rad(a) (a * (ML_PI / 180.0))
-# endif
-# if !defined (ml_rad2deg)
-#  define ml_rad2deg(a) (a * (180.0 / ML_PI))
-# endif
 # if defined (__cplusplus)
 
 extern "C" {
 
-# endif
+# endif /* __cplusplus */
+
+/* SECTION: utils
+ * * * * * * * * */
 
 ML_API float	ml_clampf(float, float, float);
 ML_API float	ml_clampf_zo(float);
 ML_API float	ml_lerpf(float, float, float);
 ML_API float	ml_lerpf_zo(float, float, float);
-ML_API void		ml_swapf(float *, float *);
+ML_API float	ml_randf(float, float);
 
 ML_API int		ml_clampi(int, int, int);
 ML_API int		ml_lerpi(int, int, float);
 ML_API int		ml_lerpi_zo(int, int, float);
+ML_API int		ml_randi(int, int);
+
+ML_API void		ml_swapf(float *, float *);
 ML_API void		ml_swapi(int *, int *);
 
-ML_API int		ml_randi(int, int);
-ML_API float	ml_randf(float, float);
-
 /* SECTION: t_vec2
- * */
+ * * * * * * * * */
 
 union u_vec2 {
 	struct {
@@ -115,7 +118,7 @@ ML_API float	ml_vec2_ang(t_vec2, t_vec2);
 ML_API bool		ml_vec2_eq(t_vec2, t_vec2);
 
 /* SECTION: t_vec3
- * */
+ * * * * * * * * */
 
 union u_vec3 {
 	struct {
@@ -169,7 +172,7 @@ ML_API float	ml_vec3_dot(t_vec3, t_vec3);
 ML_API bool		ml_vec3_eq(t_vec3, t_vec3);
 
 /* SECTION: t_vec4
- * */
+ * * * * * * * * */
 
 union u_vec4 {
 	struct {
@@ -222,7 +225,7 @@ ML_API float	ml_vec4_len_sqr(t_vec4);
 ML_API bool		ml_vec4_eq(t_vec4, t_vec4);
 
 /* SECTION: t_rect
- * */
+ * * * * * * * * */
 
 typedef union u_vec4	t_rect;
 
@@ -235,20 +238,20 @@ ML_API bool		ml_rect_aabb_vec2(t_rect, t_vec2);
 ML_API bool		ml_rect_eq(t_rect, t_rect);
 
 /* SECTION: t_col
- * */
+ * * * * * * * * */
 
 typedef union u_vec4	t_col;
 
-ML_API t_col	ml_colorf(float, float, float, float);
-ML_API t_col	ml_colorc(unsigned char, unsigned char, unsigned char, unsigned char);
-ML_API t_col	ml_colori(int);
+ML_API t_col	ml_col(float, float, float, float);
+ML_API t_col	ml_col_uc(unsigned char, unsigned char, unsigned char, unsigned char);
 
+ML_API t_col	ml_int2col(int);
 ML_API int		ml_col2int(t_col);
 
 ML_API bool		ml_vec4_eq(t_col, t_col);
 
 /* SECTION: t_mat2
- * */
+ * * * * * * * * */
 
 union u_mat2 {
 	struct {
@@ -271,7 +274,7 @@ ML_API t_mat2	ml_mat2_mulv(t_mat2, float);
 ML_API bool		ml_mat2_eq(t_mat2, t_mat2);
 
 /* SECTION: t_mat3
- * */
+ * * * * * * * * */
 
 union u_mat3 {
 	struct {
@@ -298,7 +301,7 @@ ML_API t_mat3	ml_mat3_lookat(t_vec3, t_vec3, t_vec3);
 ML_API bool		ml_mat3_eq(t_mat3, t_mat3);
 
 /* SECTION: t_mat4
- * */
+ * * * * * * * * */
 
 union u_mat4 {
 	struct {
@@ -331,12 +334,23 @@ ML_API bool		ml_mat4_eq(t_mat4, t_mat4);
 #  include <stdlib.h>
 
 /* SECTION: utils
- * */
+ * * * * * * * * */
 
 ML_API float	ml_clampf(float a, float min, float max) { return (ml_min(ml_max(a, min), max)); }
 ML_API float	ml_clampf_zo(float a) { return (ml_clampf(a, 0.0f, 1.0f)); }
 ML_API float	ml_lerpf(float a, float b, float t) { return (a + t * (b - a)); }
 ML_API float	ml_lerpf_zo(float a, float b, float t) { return (ml_lerpf(a, b, ml_clampf_zo(t))); }
+ML_API float	ml_randf(float min, float max) {
+	return (min + ((float) rand() / (float) RAND_MAX) * (max - min));
+}
+
+ML_API int	ml_clampi(int a, int min, int max) { return (ml_min(ml_max(a, min), max)); }
+ML_API int	ml_lerpi(int a, int b, float t) { return (a + t * (b - a)); }
+ML_API int	ml_lerpi_zo(int a, int b, float t) { return (ml_lerpi(a, b, ml_clampf_zo(t))); }
+
+ML_API int	ml_randi(int min, int max) {
+	return (min + (rand() % (max + 1 - min)));
+}
 
 ML_API void	ml_swapf(float *a, float *b) {
 	float	t;
@@ -346,10 +360,6 @@ ML_API void	ml_swapf(float *a, float *b) {
 	*b = t;
 }
 
-ML_API int	ml_clampi(int a, int min, int max) { return (ml_min(ml_max(a, min), max)); }
-ML_API int	ml_lerpi(int a, int b, float t) { return (a + t * (b - a)); }
-ML_API int	ml_lerpi_zo(int a, int b, float t) { return (ml_lerpi(a, b, ml_clampf_zo(t))); }
-
 ML_API void	ml_swapi(int *a, int *b) {
 	int	t;
 
@@ -358,16 +368,8 @@ ML_API void	ml_swapi(int *a, int *b) {
 	*b = t;
 }
 
-ML_API int	ml_randi(int min, int max) {
-	return (min + (rand() % (max + 1 - min)));
-}
-
-ML_API float	ml_randf(float min, float max) {
-	return (min + ((float) rand() / (float) RAND_MAX) * (max - min));
-}
-
 /* SECTION: t_vec2
- * */
+ * * * * * * * * */
 
 ML_API t_vec2	ml_vec2(float x, float y) { return ((t_vec2) { .x = x, .y = y } ); }
 ML_API t_vec2	ml_vec2_zero(void) { return (ml_vec2(0.0f, 0.0f)); }
@@ -465,7 +467,7 @@ ML_API float	ml_vec2_ang(t_vec2 a, t_vec2 b) {
 ML_API bool		ml_vec2_eq(t_vec2 a, t_vec2 b) { return (a.x == b.x && a.y == b.y); }
 
 /* SECTION: t_vec3
- * */
+ * * * * * * * * */
 
 ML_API t_vec3	ml_vec3(float x, float y, float z) { return ((t_vec3) { .x = x, .y = y, .z = z } ); }
 ML_API t_vec3	ml_vec3_zero(void) { return (ml_vec3(0.0f, 0.0f, 0.0f)); }
@@ -574,7 +576,7 @@ ML_API float	ml_vec3_dot(t_vec3 a, t_vec3 b) {
 ML_API bool		ml_vec3_eq(t_vec3 a, t_vec3 b) { return (a.x == b.x && a.y == b.y && a.z == b.z); }
 
 /* SECTION: t_vec4
- * */
+ * * * * * * * * */
 
 ML_API t_vec4	ml_vec4(float x, float y, float z, float w) { return ((t_vec4) { .x = x, .y = y, .z = z, .w = w } ); }
 ML_API t_vec4	ml_vec4_zero(void) { return (ml_vec4(0.0f, 0.0f, 0.0f, 0.0f)); }
@@ -667,7 +669,7 @@ ML_API float	ml_vec4_len_sqr(t_vec4 a) { return ((a.x * a.x) + (a.y * a.y) + (a.
 ML_API bool		ml_vec4_eq(t_vec4 a, t_vec4 b) { return (a.x == b.x && a.y == b.y && a.z == b.z && a.w == b.w); }
 
 /* SECTION: rect
- * */
+ * * * * * * * */
 
 ML_API t_rect	ml_rect(float x, float y, float w, float h) { return ((t_rect) { .x = x, .y = y, .z = w, .w = h } ); }
 ML_API t_rect	ml_rect_zero(void) { return (ml_vec4_zero()); }
@@ -688,11 +690,12 @@ ML_API bool		ml_rect_aabb_vec2(t_rect r, t_vec2 v) {
 ML_API bool		ml_rect_eq(t_rect a, t_rect b) { return (ml_vec4_eq(a, b)); }
 
 /* SECTION: t_col
- * */
+ * * * * * * * * */
 
-ML_API t_col	ml_colorf(float r, float g, float b, float a) { return (ml_vec4(r, g, b, a)); }
-ML_API t_col	ml_colorc(unsigned char r, unsigned char g, unsigned char b, unsigned char a) { return (ml_colorf(r / 255.0f, g / 255.0f, b / 255.0f, a / 255.0f)); }
-ML_API t_col	ml_colori(int i) {
+ML_API t_col	ml_col(float r, float g, float b, float a) { return (ml_vec4(r, g, b, a)); }
+ML_API t_col	ml_col_uc(unsigned char r, unsigned char g, unsigned char b, unsigned char a) { return (ml_col(r / 255.0f, g / 255.0f, b / 255.0f, a / 255.0f)); }
+
+ML_API t_col	ml_int2col(int i) {
 	unsigned char	r, g, b, a;
 
 	r = (i >> (8 * 0)) & 0xff;
@@ -709,7 +712,7 @@ ML_API int		ml_col2int(t_col col) {
 ML_API bool		ml_col_eq(t_col a, t_col b) { return (ml_vec4_eq(a, b)); }
 
 /* SECTION: t_mat2
- * */
+ * * * * * * * * */
 
 ML_API t_mat2	ml_mat2_zero(void) {
 	t_mat2	result;
@@ -729,8 +732,7 @@ ML_API t_mat2	ml_mat2_identity(void) {
 
 /*	[a b] + [e f] = [a+e b+f]
  *	[c d]   [g h]   [c+g d+h]
- * */
-
+ * * * * * * * * * * * * * * */
 ML_API t_mat2	ml_mat2_add(t_mat2 a, t_mat2 b) {
 	t_mat2	result;
 
@@ -741,7 +743,7 @@ ML_API t_mat2	ml_mat2_add(t_mat2 a, t_mat2 b) {
 
 /*	[a b] - [e f] = [a-e b-f]
  *	[c d]   [g h]   [c-g d-h]
- * */
+ * * * * * * * * * * * * * * */
 ML_API t_mat2	ml_mat2_sub(t_mat2 a, t_mat2 b) {
 	t_mat2	result;
 
@@ -752,7 +754,7 @@ ML_API t_mat2	ml_mat2_sub(t_mat2 a, t_mat2 b) {
 
 /*	[a b] * [e f] = [ae+bg af+bh]
  *	[c d]   [g h]   [ce+dg cf+dh]
- * */
+ * * * * * * * * * * * * * * * * */
 ML_API t_mat2	ml_mat2_mul(t_mat2 a, t_mat2 b) {
 	t_mat2	result;
 
@@ -766,7 +768,7 @@ ML_API t_mat2	ml_mat2_mul(t_mat2 a, t_mat2 b) {
 
 /*	v * [a b] = [av bv]
  *		[c d] = [cv dv]
- * */
+ * * * * * * * * * * * */
 ML_API t_mat2	ml_mat2_mulv(t_mat2 m, float v) {
 	t_mat2	result;
 
@@ -782,7 +784,7 @@ ML_API bool		ml_mat2_eq(t_mat2 a, t_mat2 b) {
 }
 
 /* SECTION: t_mat3
- * */
+ * * * * * * * * */
 
 ML_API t_mat3	ml_mat3_zero(void) {
 	t_mat3	result;
@@ -804,8 +806,7 @@ ML_API t_mat3	ml_mat3_identity(void) {
 
 /*	[a b] + [e f] = [a+e b+f]
  *	[c d]   [g h]   [c+g d+h]
- * */
-
+ * * * * * * * * * * * * * * */
 ML_API t_mat3	ml_mat3_add(t_mat3 a, t_mat3 b) {
 	t_mat3	result;
 
@@ -817,7 +818,7 @@ ML_API t_mat3	ml_mat3_add(t_mat3 a, t_mat3 b) {
 
 /*	[a b] - [e f] = [a-e b-f]
  *	[c d]   [g h]   [c-g d-h]
- * */
+ * * * * * * * * * * * * * * */
 ML_API t_mat3	ml_mat3_sub(t_mat3 a, t_mat3 b) {
 	t_mat3	result;
 
@@ -829,7 +830,7 @@ ML_API t_mat3	ml_mat3_sub(t_mat3 a, t_mat3 b) {
 
 /*	[a b] * [e f] = [ae+bg af+bh]
  *	[c d]   [g h]   [ce+dg cf+dh]
- * */
+ * * * * * * * * * * * * * * * * */
 ML_API t_mat3	ml_mat3_mul(t_mat3 a, t_mat3 b) {
 	t_mat3	result;
 
@@ -849,7 +850,7 @@ ML_API t_mat3	ml_mat3_mul(t_mat3 a, t_mat3 b) {
 
 /*	v * [a b] = [av bv]
  *		[c d] = [cv dv]
- * */
+ * * * * * * * * * * * */
 ML_API t_mat3	ml_mat3_mulv(t_mat3 m, float v) {
 	t_mat3	result;
 
@@ -867,7 +868,7 @@ ML_API bool		ml_mat3_eq(t_mat3 a, t_mat3 b) {
 }
 
 /* SECTION: t_mat4
- * */
+ * * * * * * * * * */
 
 ML_API t_mat4	ml_mat4_zero(void) {
 	t_mat4	result;
@@ -891,8 +892,7 @@ ML_API t_mat4	ml_mat4_identity(void) {
 
 /*	[a b] + [e f] = [a+e b+f]
  *	[c d]   [g h]   [c+g d+h]
- * */
-
+ * * * * * * * * * * * * * * */
 ML_API t_mat4	ml_mat4_add(t_mat4 a, t_mat4 b) {
 	t_mat4	result;
 
@@ -905,7 +905,7 @@ ML_API t_mat4	ml_mat4_add(t_mat4 a, t_mat4 b) {
 
 /*	[a b] - [e f] = [a-e b-f]
  *	[c d]   [g h]   [c-g d-h]
- * */
+ * * * * * * * * * * * * * * */
 ML_API t_mat4	ml_mat4_sub(t_mat4 a, t_mat4 b) {
 	t_mat4	result;
 
@@ -918,7 +918,7 @@ ML_API t_mat4	ml_mat4_sub(t_mat4 a, t_mat4 b) {
 
 /*	[a b] * [e f] = [ae+bg af+bh]
  *	[c d]   [g h]   [ce+dg cf+dh]
- * */
+ * * * * * * * * * * * * * * * * */
 ML_API t_mat4	ml_mat4_mul(t_mat4 a, t_mat4 b) {
 	t_mat4	result;
 
@@ -950,7 +950,7 @@ ML_API t_mat4	ml_mat4_mul(t_mat4 a, t_mat4 b) {
 
 /*	v * [a b] = [av bv]
  *		[c d] = [cv dv]
- * */
+ * * * * * * * * * * * */
 ML_API t_mat4	ml_mat4_mulv(t_mat4 m, float v) {
 	t_mat4	result;
 
@@ -1047,10 +1047,10 @@ ML_API bool		ml_mat4_eq(t_mat4 a, t_mat4 b) {
 		);
 }
 
-# endif
+# endif /* MATHLIB_IMPLEMENTATION */
 # if defined (__cplusplus)
 
 }
 
-# endif
-#endif 
+# endif /* __cplusplus */
+#endif /* _mathlib_h_ */

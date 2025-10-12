@@ -702,7 +702,7 @@ ML_API t_col	ml_int2col(int i) {
 	g = (i >> (8 * 1)) & 0xff;
 	b = (i >> (8 * 2)) & 0xff;
 	a = (i >> (8 * 3)) & 0xff;
-	return (ml_colorc(r, g, b, a));
+	return (ml_col_uc(r, g, b, a));
 }
 
 ML_API int		ml_col2int(t_col col) {

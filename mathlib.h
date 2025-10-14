@@ -22,8 +22,14 @@
  * * * * * * * * * * */
 
 # if !defined (ML_PI)
-#  define ML_PI 3.1415926535
+#  define ML_PI 3.14159265358979323846
 # endif /* ML_PI */
+# if !defined (ML_NAN)
+#  define ML_NAN (0.0 / 0.0)
+# endif /* ML_NAN */
+# if !defined (ML_INF)
+#  define ML_INF 1e10000f
+# endif /* */
 # if !defined (ml_deg2rad)
 #  define ml_deg2rad(a) (a * (ML_PI / 180.0))
 # endif /* ml_deg2rad */
@@ -38,8 +44,8 @@ extern "C" {
 
 
 
-/* SECTION: utils
- * * * * * * * * */
+/* SECTION: Standard Utilities
+ * * * * * * * * * * * * * * */
 
 ML_API float    ml_minf(float, float);
 ML_API float    ml_maxf(float, float);
@@ -54,26 +60,37 @@ ML_API float    ml_lerpf_zo(float, float, float);
 ML_API float    ml_powf(float, size_t);
 ML_API float    ml_sqrf(float);
 ML_API float    ml_sqrtf(float);
-ML_API float    ml_sinf(float);
-ML_API float    ml_cosf(float);
-ML_API float    ml_tanf(float);
-ML_API float    ml_atanf(float);
-ML_API float    ml_atan2f(float, float);
 ML_API float    ml_randf(float, float);
 
 ML_API int      ml_mini(int, int);
 ML_API int      ml_maxi(int, int);
 ML_API int      ml_absi(int);
 ML_API int      ml_clampi(int, int, int);
-ML_API int      ml_lerpi(int, int, int);
+ML_API int      ml_lerpi(int, int, float);
 ML_API int      ml_lerpi_zo(int, int, float);
 ML_API int      ml_powi(int, size_t);
 ML_API int      ml_sqri(int);
 ML_API int      ml_sqrti(int);
+ML_API int      ml_facti(int);
 ML_API int      ml_randi(int, int);
 
-ML_API void     ml_swapf(int *, int *);
+ML_API void     ml_swapf(float *, float *);
 ML_API void     ml_swapi(int *, int *);
+
+
+
+/* SECTION: Trigonometric
+ * * * * * * * * * * * * */
+
+ML_API float    ml_sinf(float);
+ML_API float    ml_cosf(float);
+ML_API float    ml_tanf(float);
+ML_API float    ml_cotf(float);
+ML_API float    ml_asinf(float);
+ML_API float    ml_acosf(float);
+ML_API float    ml_atanf(float);
+ML_API float    ml_acotf(float);
+ML_API float    ml_atan2f(float, float);
 
 
 
@@ -368,30 +385,125 @@ ML_API bool     ml_mat4_eq(t_mat4, t_mat4);
 
 
 # if defined (MATHLIB_IMPLEMENTATION)
-#  include <math.h>
-#  include <time.h>
-#  include <stdlib.h>
+#
+#  if !defined (ML_TAYLOR_SERIES_PRECISION)
+#   define ML_TAYLOR_SERIES_PRECISION 100
+#  endif /* ML_TAYLOR_SERIES_PRECISION */
 
 
 
-/* SECTION: utils
- * * * * * * * * */
+/* SECTION: Standard Utilities
+ * * * * * * * * * * * * * * */
 
-ML_API float    ml_clampf(float a, float min, float max) { return (ml_min(ml_max(a, min), max)); }
-ML_API float    ml_clampf_zo(float a) { return (ml_clampf(a, 0.0f, 1.0f)); }
+ML_API float    ml_minf(float a, float b) { return (a < b ? a : b); }
+
+ML_API float    ml_maxf(float a, float b) { return (a > b ? a : b); }
+
+ML_API float    ml_absf(float f) { return (f < 0.0 ? f * -1.0 : f); }
+
+ML_API float    ml_ceilf(float f) { return (f + (f - (int) f)); }
+
+ML_API float    ml_floorf(float f) { return (f - (int) f); }
+
+ML_API float    ml_roundf(float f) { return ((f - (int) f) < 0.5 ? ml_floorf(f) : ml_ceilf(f)); }
+
+ML_API float    ml_clampf(float a, float min, float max) { return (ml_minf(ml_maxf(a, min), max)); }
+
+ML_API float    ml_clampf_zo(float a) { return (ml_clampf(a, 0.0, 1.0)); }
+
 ML_API float    ml_lerpf(float a, float b, float t) { return (a + t * (b - a)); }
+
 ML_API float    ml_lerpf_zo(float a, float b, float t) { return (ml_lerpf(a, b, ml_clampf_zo(t))); }
-ML_API float    ml_randf(float min, float max) {
-    return (min + ((float) rand() / (float) RAND_MAX) * (max - min));
+
+ML_API float    ml_powf(float base, size_t exp) {
+    float   result;
+
+    if (!exp) { return (1); }
+    result = base;
+    for (size_t i = 1; i < exp; i++) {
+        result *= base;
+    }
+    return (result);
 }
 
-ML_API int  ml_clampi(int a, int min, int max) { return (ml_min(ml_max(a, min), max)); }
+ML_API float    ml_sqrf(float base) { return (ml_powf(base, 2)); }
+
+ML_API float    ml_sqrtf(float value) {
+    float   low, high, middle;
+
+    /* imaginary-number scenario... */
+    if (value < 0.0) { return (ML_NAN); }
+    low = ml_minf(1.0, value);
+    high = ml_maxf(1.0, value);
+
+    while (100.0 * low * low < value) { low *= 10; }
+    while (0.01 * high * high > value) { high *= 0.1; }
+
+    for (size_t i = 0; i < 100; i++) {
+        middle = (low + high) / 2.0;
+        if (middle * middle == value) { return (middle); }
+
+        if (middle * middle > value) { high = middle; }
+        else { low = middle; }
+    }
+    return (middle);
+}
+
+ML_API float    ml_randf(float min, float max) { return (0); }
+
+
+
+
+
+
+ML_API int  ml_mini(int a, int b) { return (a < b ? a : b); }
+
+ML_API int  ml_maxi(int a, int b) { return (a > b ? a : b); }
+
+ML_API int  ml_absi(int i) { return (i < 0.0 ? i * -1 : i); }
+
+ML_API int  ml_clampi(int a, int min, int max) { return (ml_mini(ml_maxi(a, min), max)); }
+
 ML_API int  ml_lerpi(int a, int b, float t) { return (a + t * (b - a)); }
+
 ML_API int  ml_lerpi_zo(int a, int b, float t) { return (ml_lerpi(a, b, ml_clampf_zo(t))); }
 
-ML_API int  ml_randi(int min, int max) {
-    return (min + (rand() % (max + 1 - min)));
+ML_API int  ml_powi(int base, size_t exp) {
+    int result;
+
+    if (!exp) { return (1); }
+    result = base;
+    for (size_t i = 1; i < exp; i++) {
+        result *= base;
+    }
+    return (result);
 }
+ML_API int  ml_sqri(int base) { return (ml_powi(base, 2)); }
+
+ML_API int  ml_sqrti(int value) {
+    int x, y;
+
+    /* imaginary-number scenario... */
+    if (value < 0) { return (ML_NAN); }
+    x = value;
+    y = (x + 1) / 2;
+    while (y < x) {
+        x = y;
+        y = (x + value / x) / 2;
+    }
+    return (x);
+}
+
+ML_API int  ml_facti(int value) {
+    int result;
+
+    result = 1;
+    while (value > 0) { result *= value, value--; }
+
+    return (result);
+}
+
+ML_API int  ml_randi(int min, int max) { return (0); }
 
 ML_API void ml_swapf(float *a, float *b) {
     float   t;
@@ -411,19 +523,105 @@ ML_API void ml_swapi(int *a, int *b) {
 
 
 
+/* SECTION: Trigonometric
+ * * * * * * * * * * * * */
+
+ML_API float    ml_sinf(float x) {
+    float   result;
+
+    result = x;
+    for (size_t i = 1; i < ML_TAYLOR_SERIES_PRECISION; i++) {
+        float   term;
+
+        term = (i % 2 ? -1.0 : 1.0) * ((ml_powf(x, 2 * i + 1) / ml_facti(2 * i + 1)));
+        if (ml_absf(term) < 1e-10f) {
+            break;
+        }
+
+        result += term;
+    }
+    return (result);
+}
+
+ML_API float    ml_cosf(float x) {
+    float   result;
+
+    result = 1.0;
+    for (size_t i = 1; i < ML_TAYLOR_SERIES_PRECISION; i++) {
+        float   term;
+
+        term = (i % 2 ? -1.0 : 1.0) * ((ml_powf(x, 2 * i) / ml_facti(2 * i)));
+        if (ml_absf(term) < 1e-10f) {
+            break;
+        }
+
+        result += term;
+    }
+    return (result);
+}
+
+ML_API float    ml_tanf(float x) { return (ml_sinf(x) / ml_cosf(x)); }
+
+ML_API float    ml_atanf(float x) {
+    float   result;
+
+    /* 1.0 < |x| case... */
+    if (x > 1.0) { return (ML_PI / 2.0 - ml_atanf(1.0 / x)); }
+    else if (x < -1.0) { return (-ML_PI / 2.0 - ml_atanf(1.0 / x)); }
+ 
+    /* 1.0 > |x| case... */
+    result = x;
+    for (size_t i = 1; i < ML_TAYLOR_SERIES_PRECISION; i++) {
+        float   term;
+
+        term = (i % 2 ? -1.0 : 1.0) * ((ml_powf(x, 2 * i + 1) / (2 * i + 1)));
+        if (ml_absf(term) < 1e-10f) {
+            break;
+        }
+
+        result += term;
+    }
+    return (result);
+}
+
+ML_API float    ml_atan2f(float y, float x) {
+    if (x > 0.0) { return (ml_atanf(y / x)); }
+    else if (x < 0.0) {
+        if (y >= 0.0) { return (ml_atanf(y / x) + ML_PI); }
+        if (y < 0.0) { return (ml_atanf(y / x) - ML_PI); }
+    }
+    else if (x == 0.0) {
+        if (y > 0.0) { return (ML_PI / 2.0); }
+        if (y < 0.0) { return (-ML_PI / 2.0); }
+    }
+    return (ML_NAN);
+}
+
+
+
 /* SECTION: t_vec2
  * * * * * * * * */
 
 ML_API t_vec2   ml_vec2(float x, float y) { return ((t_vec2) { .x = x, .y = y } ); }
-ML_API t_vec2   ml_vec2_zero(void) { return (ml_vec2(0.0f, 0.0f)); }
+
+ML_API t_vec2   ml_vec2_zero(void) { return (ml_vec2(0.0, 0.0)); }
+
 ML_API t_vec2   ml_vec2_cpy(t_vec2 v) { return (ml_vec2(v.x, v.y)); }
+
 ML_API t_vec2   ml_vec2_add(t_vec2 a, t_vec2 b) { return (ml_vec2(a.x + b.x, a.y + b.y)); }
+
 ML_API t_vec2   ml_vec2_addv(t_vec2 v, float f) { return (ml_vec2(v.x + f, v.y + f)); }
+
 ML_API t_vec2   ml_vec2_sub(t_vec2 a, t_vec2 b) { return (ml_vec2(a.x - b.x, a.y - b.y)); }
+
 ML_API t_vec2   ml_vec2_subv(t_vec2 v, float f) { return (ml_vec2(v.x - f, v.y - f)); }
+
 ML_API t_vec2   ml_vec2_mul(t_vec2 a, t_vec2 b) { return (ml_vec2(a.x * b.x, a.y * b.y)); }
+
 ML_API t_vec2   ml_vec2_mulv(t_vec2 v, float f) { return (ml_vec2(v.x * f, v.y * f)); }
+
 ML_API t_vec2   ml_vec2_div(t_vec2 a, t_vec2 b) { return (ml_vec2(a.x / b.x, a.y / b.y)); }
+
 ML_API t_vec2   ml_vec2_divv(t_vec2 v, float f) { return (ml_vec2(v.x / f, v.y / f)); }
 
 ML_API t_vec2   ml_vec2_clamp(t_vec2 v, t_vec2 min, t_vec2 max) {
@@ -435,7 +633,7 @@ ML_API t_vec2   ml_vec2_clamp(t_vec2 v, t_vec2 min, t_vec2 max) {
 }
 
 ML_API t_vec2   ml_vec2_clamp_zo(t_vec2 v) {
-    return (ml_vec2_clamp(v, ml_vec2(0.0f, 0.0f), ml_vec2(1.0f, 1.0f)));
+    return (ml_vec2_clamp(v, ml_vec2(0.0, 0.0), ml_vec2(1.0, 1.0)));
 }
 
 ML_API t_vec2   ml_vec2_clamp_val(t_vec2 v, float min, float max) {
@@ -459,8 +657,8 @@ ML_API t_vec2   ml_vec2_lerp_zo(t_vec2 a, t_vec2 b, float t) {
 
 ML_API t_vec2   ml_vec2_dir(t_vec2 a, t_vec2 b) {
     return ((t_vec2) {
-            .x = cosf(atan2(a.y - b.y, a.x - b.x)) * -1,
-            .y = sinf(atan2(a.y - b.y, a.x - b.x)) * -1
+            .x = ml_cosf(ml_atan2f(a.y - b.y, a.x - b.x)) * -1,
+            .y = ml_sinf(ml_atan2f(a.y - b.y, a.x - b.x)) * -1
         }
     );
 }
@@ -472,10 +670,10 @@ ML_API t_vec2   ml_vec2_move_towards(t_vec2 start, t_vec2 target, float t) {
     delta = ml_vec2_sub(target, start);
     val = ml_vec2_len_sqr(delta);
 
-    if (val == 0.0f || ((t >= 0) && (val <= t * t))) {
+    if (val == 0.0 || ((t >= 0) && (val <= t * t))) {
         return (target);
     }
-    dist = sqrtf(val);
+    dist = ml_sqrtf(val);
     result.x = start.x + delta.x / dist * t;
     result.y = start.y + delta.y / dist * t;
     return (result);
@@ -488,23 +686,27 @@ ML_API t_vec2   ml_vec2_normalize(t_vec2 v) {
     result = ml_vec2(0, 0);
     len = ml_vec2_len(v);
     if (len > 0) {
-        leninv = 1.0f / len;
+        leninv = 1.0 / len;
         result.x = v.x * leninv;
         result.y = v.y * leninv;
     }
     return (result);
 }
 
-ML_API float    ml_vec2_dist(t_vec2 a, t_vec2 b) { return (sqrtf((a.x - b.x) * (a.x - b.x) + (a.y - b.y) * (a.y - b.y))); }
+ML_API float    ml_vec2_dist(t_vec2 a, t_vec2 b) { return (ml_sqrtf((a.x - b.x) * (a.x - b.x) + (a.y - b.y) * (a.y - b.y))); }
+
 ML_API float    ml_vec2_dist_sqr(t_vec2 a, t_vec2 b) { return ((a.x - b.x) * (a.x - b.x) + (a.y - b.y) * (a.y - b.y)); }
-ML_API float    ml_vec2_len(t_vec2 a) { return (sqrtf((a.x * a.x) + (a.y * a.y))); }
+
+ML_API float    ml_vec2_len(t_vec2 a) { return (ml_sqrtf((a.x * a.x) + (a.y * a.y))); }
+
 ML_API float    ml_vec2_len_sqr(t_vec2 a) { return ((a.x * a.x) + (a.y * a.y)); }
+
 ML_API float    ml_vec2_ang(t_vec2 a, t_vec2 b) {
     float   dot, det;
 
     dot = a.x * b.x + a.y * b.y;
     det = a.x * b.y - a.y * b.x;
-    return (atan2(dot, det));
+    return (ml_atan2f(dot, det));
 }
 
 ML_API bool     ml_vec2_eq(t_vec2 a, t_vec2 b) { return (a.x == b.x && a.y == b.y); }
@@ -515,15 +717,25 @@ ML_API bool     ml_vec2_eq(t_vec2 a, t_vec2 b) { return (a.x == b.x && a.y == b.
  * * * * * * * * */
 
 ML_API t_vec3   ml_vec3(float x, float y, float z) { return ((t_vec3) { .x = x, .y = y, .z = z } ); }
-ML_API t_vec3   ml_vec3_zero(void) { return (ml_vec3(0.0f, 0.0f, 0.0f)); }
+
+ML_API t_vec3   ml_vec3_zero(void) { return (ml_vec3(0.0, 0.0, 0.0)); }
+
 ML_API t_vec3   ml_vec3_cpy(t_vec3 v) { return (ml_vec3(v.x, v.y, v.z)); }
+
 ML_API t_vec3   ml_vec3_add(t_vec3 a, t_vec3 b) { return (ml_vec3(a.x + b.x, a.y + b.y, a.z + b.z)); }
+
 ML_API t_vec3   ml_vec3_addv(t_vec3 v, float f) { return (ml_vec3(v.x + f, v.y + f, v.z + f)); }
+
 ML_API t_vec3   ml_vec3_sub(t_vec3 a, t_vec3 b) { return (ml_vec3(a.x - b.x, a.y - b.y, a.z - b.z)); }
+
 ML_API t_vec3   ml_vec3_subv(t_vec3 v, float f) { return (ml_vec3(v.x - f, v.y - f, v.z - f)); }
+
 ML_API t_vec3   ml_vec3_mul(t_vec3 a, t_vec3 b) { return (ml_vec3(a.x * b.x, a.y * b.y, a.z * b.z)); }
+
 ML_API t_vec3   ml_vec3_mulv(t_vec3 v, float f) { return (ml_vec3(v.x * f, v.y * f, v.z * f)); }
+
 ML_API t_vec3   ml_vec3_div(t_vec3 a, t_vec3 b) { return (ml_vec3(a.x / b.x, a.y / b.y, a.z / b.z)); }
+
 ML_API t_vec3   ml_vec3_divv(t_vec3 v, float f) { return (ml_vec3(v.x / f, v.y / f, v.z / f)); }
 
 ML_API t_vec3   ml_vec3_clamp(t_vec3 v, t_vec3 min, t_vec3 max) {
@@ -536,7 +748,7 @@ ML_API t_vec3   ml_vec3_clamp(t_vec3 v, t_vec3 min, t_vec3 max) {
 }
 
 ML_API t_vec3   ml_vec3_clamp_zo(t_vec3 v) {
-    return (ml_vec3_clamp(v, ml_vec3(0.0f, 0.0f, 0.0f), ml_vec3(1.0f, 1.0f, 1.0f)));
+    return (ml_vec3_clamp(v, ml_vec3(0.0, 0.0, 0.0), ml_vec3(1.0, 1.0, 1.0)));
 }
 
 ML_API t_vec3   ml_vec3_clamp_val(t_vec3 v, float min, float max) {
@@ -567,10 +779,10 @@ ML_API t_vec3   ml_vec3_move_towards(t_vec3 start, t_vec3 target, float t) {
     delta = ml_vec3_sub(target, start);
     val = ml_vec3_len_sqr(delta);
 
-    if (val == 0.0f || ((t >= 0) && (val <= t * t))) {
+    if (val == 0.0 || ((t >= 0) && (val <= t * t))) {
         return (target);
     }
-    dist = sqrtf(val);
+    dist = ml_sqrtf(val);
     result.x = start.x + delta.x / dist * t;
     result.y = start.y + delta.y / dist * t;
     result.z = start.z + delta.z / dist * t;
@@ -593,7 +805,7 @@ ML_API t_vec3   ml_vec3_normalize(t_vec3 v) {
     result = ml_vec3(0, 0, 0);
     len = ml_vec3_len(v);
     if (len > 0) {
-        leninv = 1.0f / len;
+        leninv = 1.0 / len;
         result.x = v.x * leninv;
         result.y = v.y * leninv;
         result.z = v.z * leninv;
@@ -601,10 +813,14 @@ ML_API t_vec3   ml_vec3_normalize(t_vec3 v) {
     return (result);
 }
 
-ML_API float    ml_vec3_dist(t_vec3 a, t_vec3 b) { return (sqrtf((a.x - b.x) * (a.x - b.x) + (a.y - b.y) * (a.y - b.y) + (a.z - b.z) * (a.z - b.z))); }
+ML_API float    ml_vec3_dist(t_vec3 a, t_vec3 b) { return (ml_sqrtf((a.x - b.x) * (a.x - b.x) + (a.y - b.y) * (a.y - b.y) + (a.z - b.z) * (a.z - b.z))); }
+
 ML_API float    ml_vec3_dist_sqr(t_vec3 a, t_vec3 b) { return ((a.x - b.x) * (a.x - b.x) + (a.y - b.y) * (a.y - b.y) + (a.z - b.z) * (a.z - b.z)); }
-ML_API float    ml_vec3_len(t_vec3 a) { return (sqrtf((a.x * a.x) + (a.y * a.y) + (a.z * a.z))); }
+
+ML_API float    ml_vec3_len(t_vec3 a) { return (ml_sqrtf((a.x * a.x) + (a.y * a.y) + (a.z * a.z))); }
+
 ML_API float    ml_vec3_len_sqr(t_vec3 a) { return ((a.x * a.x) + (a.y * a.y) + (a.z * a.z)); }
+
 ML_API float    ml_vec3_ang(t_vec3 a, t_vec3 b) {
     t_vec3  cross;
     float   dot, len;
@@ -612,7 +828,7 @@ ML_API float    ml_vec3_ang(t_vec3 a, t_vec3 b) {
     cross = ml_vec3_cross(a, b);
     len = ml_vec3_len_sqr(cross);
     dot = ml_vec3_len(cross);
-    return (atan2(len, dot));
+    return (ml_atan2f(len, dot));
 }
 ML_API float    ml_vec3_dot(t_vec3 a, t_vec3 b) {
     return (a.x * b.x + a.y * b.y + a.z * b.z);
@@ -626,15 +842,25 @@ ML_API bool     ml_vec3_eq(t_vec3 a, t_vec3 b) { return (a.x == b.x && a.y == b.
  * * * * * * * * */
 
 ML_API t_vec4   ml_vec4(float x, float y, float z, float w) { return ((t_vec4) { .x = x, .y = y, .z = z, .w = w } ); }
-ML_API t_vec4   ml_vec4_zero(void) { return (ml_vec4(0.0f, 0.0f, 0.0f, 0.0f)); }
+
+ML_API t_vec4   ml_vec4_zero(void) { return (ml_vec4(0.0, 0.0, 0.0, 0.0)); }
+
 ML_API t_vec4   ml_vec4_cpy(t_vec4 v) { return (ml_vec4(v.x, v.y, v.z, v.w)); }
+
 ML_API t_vec4   ml_vec4_add(t_vec4 a, t_vec4 b) { return (ml_vec4(a.x + b.x, a.y + b.y, a.z + b.z, a.w + b.w)); }
+
 ML_API t_vec4   ml_vec4_addv(t_vec4 v, float f) { return (ml_vec4(v.x + f, v.y + f, v.z + f, v.w + f)); }
+
 ML_API t_vec4   ml_vec4_sub(t_vec4 a, t_vec4 b) { return (ml_vec4(a.x - b.x, a.y - b.y, a.z - b.z, a.w - b.w)); }
+
 ML_API t_vec4   ml_vec4_subv(t_vec4 v, float f) { return (ml_vec4(v.x - f, v.y - f, v.z - f, v.w - f)); }
+
 ML_API t_vec4   ml_vec4_mul(t_vec4 a, t_vec4 b) { return (ml_vec4(a.x * b.x, a.y * b.y, a.z * b.z, a.w * b.w)); }
+
 ML_API t_vec4   ml_vec4_mulv(t_vec4 v, float f) { return (ml_vec4(v.x * f, v.y * f, v.z * f, v.w * f)); }
+
 ML_API t_vec4   ml_vec4_div(t_vec4 a, t_vec4 b) { return (ml_vec4(a.x / b.x, a.y / b.y, a.z / b.z, a.w / b.w)); }
+
 ML_API t_vec4   ml_vec4_divv(t_vec4 v, float f) { return (ml_vec4(v.x / f, v.y / f, v.z / f, v.w / f)); }
 
 ML_API t_vec4   ml_vec4_clamp(t_vec4 v, t_vec4 min, t_vec4 max) {
@@ -648,7 +874,7 @@ ML_API t_vec4   ml_vec4_clamp(t_vec4 v, t_vec4 min, t_vec4 max) {
 }
 
 ML_API t_vec4   ml_vec4_clamp_zo(t_vec4 v) {
-    return (ml_vec4_clamp(v, ml_vec4(0.0f, 0.0f, 0.0f, 0.0f), ml_vec4(1.0f, 1.0f, 1.0f, 1.0f)));
+    return (ml_vec4_clamp(v, ml_vec4(0.0, 0.0, 0.0, 0.0), ml_vec4(1.0, 1.0, 1.0, 1.0)));
 }
 
 ML_API t_vec4   ml_vec4_clamp_val(t_vec4 v, float min, float max) {
@@ -681,10 +907,10 @@ ML_API t_vec4   ml_vec4_move_towards(t_vec4 start, t_vec4 target, float t) {
     delta = ml_vec4_sub(target, start);
     val = ml_vec4_len_sqr(delta);
 
-    if (val == 0.0f || ((t >= 0) && (val <= t * t))) {
+    if (val == 0.0 || ((t >= 0) && (val <= t * t))) {
         return (target);
     }
-    dist = sqrtf(val);
+    dist = ml_sqrtf(val);
     result.x = start.x + delta.x / dist * t;
     result.y = start.y + delta.y / dist * t;
     result.z = start.z + delta.z / dist * t;
@@ -699,7 +925,7 @@ ML_API t_vec4   ml_vec4_normalize(t_vec4 v) {
     result = ml_vec4(0, 0, 0, 0);
     len = ml_vec4_len(v);
     if (len > 0) {
-        leninv = 1.0f / len;
+        leninv = 1.0 / len;
         result.x = v.x * leninv;
         result.y = v.y * leninv;
         result.z = v.z * leninv;
@@ -708,9 +934,12 @@ ML_API t_vec4   ml_vec4_normalize(t_vec4 v) {
     return (result);
 }
 
-ML_API float    ml_vec4_dist(t_vec4 a, t_vec4 b) { return (sqrtf((a.x - b.x) * (a.x - b.x) + (a.y - b.y) * (a.y - b.y) + (a.z - b.z) * (a.z - b.z) + (a.w - b.w) * (a.w - b.w))); }
+ML_API float    ml_vec4_dist(t_vec4 a, t_vec4 b) { return (ml_sqrtf((a.x - b.x) * (a.x - b.x) + (a.y - b.y) * (a.y - b.y) + (a.z - b.z) * (a.z - b.z) + (a.w - b.w) * (a.w - b.w))); }
+
 ML_API float    ml_vec4_dist_sqr(t_vec4 a, t_vec4 b) { return ((a.x - b.x) * (a.x - b.x) + (a.y - b.y) * (a.y - b.y) + (a.z - b.z) * (a.z - b.z) + (a.w - b.w) * (a.w - b.w)); }
-ML_API float    ml_vec4_len(t_vec4 a) { return (sqrtf((a.x * a.x) + (a.y * a.y) + (a.z * a.z) + (a.w * a.w))); }
+
+ML_API float    ml_vec4_len(t_vec4 a) { return (ml_sqrtf((a.x * a.x) + (a.y * a.y) + (a.z * a.z) + (a.w * a.w))); }
+
 ML_API float    ml_vec4_len_sqr(t_vec4 a) { return ((a.x * a.x) + (a.y * a.y) + (a.z * a.z) + (a.w * a.w)); }
 
 ML_API bool     ml_vec4_eq(t_vec4 a, t_vec4 b) { return (a.x == b.x && a.y == b.y && a.z == b.z && a.w == b.w); }
@@ -721,7 +950,9 @@ ML_API bool     ml_vec4_eq(t_vec4 a, t_vec4 b) { return (a.x == b.x && a.y == b.
  * * * * * * * */
 
 ML_API t_rect   ml_rect(float x, float y, float w, float h) { return ((t_rect) { .x = x, .y = y, .z = w, .w = h } ); }
+
 ML_API t_rect   ml_rect_zero(void) { return (ml_vec4_zero()); }
+
 ML_API t_rect   ml_rect_vec2(t_vec2 pos, t_vec2 siz) { return (ml_rect(pos.x, pos.y, siz.w, siz.h)); }
 
 ML_API bool     ml_rect_aabb(t_rect a, t_rect b) {
@@ -744,7 +975,8 @@ ML_API bool     ml_rect_eq(t_rect a, t_rect b) { return (ml_vec4_eq(a, b)); }
  * * * * * * * * */
 
 ML_API t_col    ml_col(float r, float g, float b, float a) { return (ml_vec4(r, g, b, a)); }
-ML_API t_col    ml_col_uc(unsigned char r, unsigned char g, unsigned char b, unsigned char a) { return (ml_col(r / 255.0f, g / 255.0f, b / 255.0f, a / 255.0f)); }
+
+ML_API t_col    ml_col_uc(unsigned char r, unsigned char g, unsigned char b, unsigned char a) { return (ml_col(r / 255.0, g / 255.0, b / 255.0, a / 255.0)); }
 
 ML_API t_col    ml_int2col(int i) {
     unsigned char   r, g, b, a;
@@ -757,7 +989,7 @@ ML_API t_col    ml_int2col(int i) {
 }
 
 ML_API int      ml_col2int(t_col col) {
-    return ((int) (col.r * 255.0f) << 0 | (int) (col.g * 255.0f) << 8 | (int) (col.b * 255.0f) << 16 | (int) (col.a * 255.0f) << 24);
+    return ((int) (col.r * 255.0) << 0 | (int) (col.g * 255.0) << 8 | (int) (col.b * 255.0) << 16 | (int) (col.a * 255.0) << 24);
 }
 
 ML_API bool     ml_col_eq(t_col a, t_col b) { return (ml_vec4_eq(a, b)); }
@@ -1106,16 +1338,16 @@ ML_API t_mat4   ml_mat4_ortho(float left, float right, float top, float down, fl
     t_mat4  result;
 
     result = ml_mat4_zero();
-    result.ptr[0][0] = 2.0f / (right - left);
+    result.ptr[0][0] = 2.0 / (right - left);
     
-    result.ptr[1][1] = 2.0f / (top - down);
+    result.ptr[1][1] = 2.0 / (top - down);
     
-    result.ptr[2][2] = 2.0f / (far - near);
+    result.ptr[2][2] = 2.0 / (far - near);
     
     result.ptr[3][0] = -(left + right) / (right - left);
     result.ptr[3][1] = -(top + down) / (top - down);
     result.ptr[3][2] = -(far + near) / (far - near);
-    result.ptr[3][3] = 1.0f;
+    result.ptr[3][3] = 1.0;
     return (result);
 }
 
@@ -1124,7 +1356,7 @@ ML_API t_mat4   ml_mat4_persp(float fov, float aspect, float near, float far) {
     double  top, bottom, left, right;
     float   rl, tb, fn;
 
-    top = near * tan(fov * 0.5);
+    top = near * ml_tanf(fov * 0.5);
     bottom = -top;
     right = top * aspect;
     left = -right;
@@ -1134,16 +1366,16 @@ ML_API t_mat4   ml_mat4_persp(float fov, float aspect, float near, float far) {
     fn = (float) (far - near);
 
     result = ml_mat4_zero();
-    result.ptr[0][0] = (near * 2.0f) / rl; 
+    result.ptr[0][0] = (near * 2.0) / rl; 
     
-    result.ptr[1][1] = (near * 2.0f) / tb;
+    result.ptr[1][1] = (near * 2.0) / tb;
     
     result.ptr[2][0] = (right + left) / rl;
     result.ptr[2][1] = (top + bottom) / tb;
     result.ptr[2][2] = -(far + near) / fn;
-    result.ptr[2][3] = -1.0f;
+    result.ptr[2][3] = -1.0;
     
-    result.ptr[3][2] = -(far * near * 2.0f) / fn;
+    result.ptr[3][2] = -(far * near * 2.0) / fn;
     return (result);
 }
 

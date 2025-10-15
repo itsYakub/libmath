@@ -530,10 +530,10 @@ ML_API float    ml_sinf(float x) {
     float   result;
 
     result = x;
-    for (size_t i = 1; i < ML_TAYLOR_SERIES_PRECISION; i++) {
+    for (size_t n = 1; n < ML_TAYLOR_SERIES_PRECISION; n++) {
         float   term;
 
-        term = (i % 2 ? -1.0 : 1.0) * ((ml_powf(x, 2 * i + 1) / ml_facti(2 * i + 1)));
+        term = (n % 2 ? -1.0 : 1.0) * ((ml_powf(x, 2 * n + 1) / ml_facti(2 * n + 1)));
         if (ml_absf(term) < 1e-10f) {
             break;
         }
@@ -547,10 +547,10 @@ ML_API float    ml_cosf(float x) {
     float   result;
 
     result = 1.0;
-    for (size_t i = 1; i < ML_TAYLOR_SERIES_PRECISION; i++) {
+    for (size_t n = 1; n < ML_TAYLOR_SERIES_PRECISION; n++) {
         float   term;
 
-        term = (i % 2 ? -1.0 : 1.0) * ((ml_powf(x, 2 * i) / ml_facti(2 * i)));
+        term = (n % 2 ? -1.0 : 1.0) * ((ml_powf(x, 2 * n) / ml_facti(2 * n)));
         if (ml_absf(term) < 1e-10f) {
             break;
         }
@@ -561,20 +561,19 @@ ML_API float    ml_cosf(float x) {
 }
 
 ML_API float    ml_tanf(float x) { return (ml_sinf(x) / ml_cosf(x)); }
+ML_API float    ml_cotf(float x) { return (1 / ml_tanf(x)); }
 
-ML_API float    ml_atanf(float x) {
+ML_API float    ml_asinf(float x) {
     float   result;
 
-    /* 1.0 < |x| case... */
-    if (x > 1.0) { return (ML_PI / 2.0 - ml_atanf(1.0 / x)); }
-    else if (x < -1.0) { return (-ML_PI / 2.0 - ml_atanf(1.0 / x)); }
+    if (x >= 1.0) { return (ML_PI / 2.0 - ml_asinf(1.0 / x)); }
+    else if (x <= -1.0) { return (-ML_PI / 2.0 - ml_asinf(1.0 / x)); }
  
-    /* 1.0 > |x| case... */
     result = x;
-    for (size_t i = 1; i < ML_TAYLOR_SERIES_PRECISION; i++) {
+    for (size_t n = 1; n < ML_TAYLOR_SERIES_PRECISION; n++) {
         float   term;
 
-        term = (i % 2 ? -1.0 : 1.0) * ((ml_powf(x, 2 * i + 1) / (2 * i + 1)));
+        term = (ml_facti(2 * n) / (ml_powf(4, n) * ml_sqrf(ml_facti(n)) * (2 * n + 1))) * ml_powf(x, 2 * n + 1);
         if (ml_absf(term) < 1e-10f) {
             break;
         }
@@ -583,6 +582,32 @@ ML_API float    ml_atanf(float x) {
     }
     return (result);
 }
+
+ML_API float    ml_acosf(float x) {
+    return ((ML_PI / 2 - x) - ml_asinf(x));
+}
+
+ML_API float    ml_atanf(float x) {
+    float   result;
+
+    if (x > 1.0) { return (ML_PI / 2.0 - ml_atanf(1.0 / x)); }
+    else if (x < -1.0) { return (-ML_PI / 2.0 - ml_atanf(1.0 / x)); }
+ 
+    result = x;
+    for (size_t n = 1; n < ML_TAYLOR_SERIES_PRECISION; n++) {
+        float   term;
+
+        term = (n % 2 ? -1.0 : 1.0) * ((ml_powf(x, 2 * n + 1) / (2 * n + 1)));
+        if (ml_absf(term) < 1e-10f) {
+            break;
+        }
+
+        result += term;
+    }
+    return (result);
+}
+
+ML_API float    ml_acotf(float x) { return (ML_PI / 2.0 - ml_atanf(x)); }
 
 ML_API float    ml_atan2f(float y, float x) {
     if (x > 0.0) { return (ml_atanf(y / x)); }

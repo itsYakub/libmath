@@ -24,6 +24,9 @@
 # if !defined (ML_PI)
 #  define ML_PI 3.14159265358979323846
 # endif /* ML_PI */
+# if !defined (ML_EPSILON)
+#  define ML_EPSILON 1e-6f
+# endif /* ML_EPSILON */
 # if !defined (ML_NAN)
 #  define ML_NAN (0.0 / 0.0)
 # endif /* ML_NAN */
@@ -425,27 +428,20 @@ ML_API double   ml_powf(double base, size_t exp) {
 ML_API double   ml_sqrf(double base) { return (ml_powf(base, 2)); }
 
 ML_API double   ml_sqrtf(double value) {
-    double  low, high, middle;
+    double  x, y;
 
     /* imaginary-number scenario... */
     if (value < 0.0) { return (ML_NAN); }
-    low = ml_minf(1.0, value);
-    high = ml_maxf(1.0, value);
-
-    while (100.0 * low * low < value) { low *= 10; }
-    while (0.01 * high * high > value) { high *= 0.1; }
-
-    for (size_t i = 0; i < 100; i++) {
-        middle = (low + high) / 2.0;
-        if (middle * middle == value) { return (middle); }
-
-        if (middle * middle > value) { high = middle; }
-        else { low = middle; }
+    x = value;
+    y = (x + 1.0) / 2.0;
+    while (y < x) {
+        x = y;
+        y = (x + value / x) / 2.0;
     }
-    return (middle);
+    return (x);
 }
 
-ML_API double   ml_randf(double min, double max) { return (0); }
+ML_API double   ml_randf(double min, double max) { return (0); } /* TODO */
 
 
 
@@ -494,15 +490,13 @@ ML_API int  ml_facti(int value) {
     int result;
 
     result = 1;
-    while (value > 0) {
-		result *= value;
-		value--;
-	}
-
+    if (value < 0) { return (0); }
+    else if (!value) { return (result); }
+    while (value > 0) { result *= value; value--; }
     return (result);
 }
 
-ML_API int  ml_randi(int min, int max) { return (0); }
+ML_API int  ml_randi(int min, int max) { return (0); } /* TODO */
 
 ML_API void ml_swapf(double *a, double *b) {
     double  t;
@@ -533,11 +527,11 @@ ML_API double   ml_sinf(double x) {
     while (x > ML_PI / 2.0) { x -= ML_PI, sign *= -1.0; }
     
     result = 0.0;
-    for (size_t n = 0; ; n++) {
+    for (size_t n = 0 ;; n++) {
         double	term;
 
         term = (ml_powf(-1, n) / ml_facti(2 * n + 1)) * ml_powf(x, 2 * n + 1);
-        if (ml_absf(term) < 1e-6f) {
+        if (ml_absf(term) < ML_EPSILON) {
             break;
         }
 
@@ -547,50 +541,35 @@ ML_API double   ml_sinf(double x) {
 }
 
 ML_API double   ml_cosf(double x) { return (ml_sinf(ML_PI / 2.0 - x)); }
+
 ML_API double   ml_tanf(double x) { return (ml_sinf(x) / ml_cosf(x)); }
+
 ML_API double   ml_cotf(double x) { return (1 / ml_tanf(x)); }
 
-ML_API double   ml_asinf(double x) {
+ML_API double   ml_asinf(double x) { return (ml_atanf(x / ml_sqrtf(ml_sqrf(x) + 1.0))); }
+
+ML_API double   ml_acosf(double x) { return (ML_PI / 2.0 - ml_asinf(x)); }
+
+ML_API double   ml_atanf(double x) { /* TODO */
     double  result, sign;
 
     sign = 1.0;
-    while (x < -1.0) { x += ML_PI / 2.0, sign *= -1.0; }
-    while (x > 1.0) { x -= ML_PI / 2.0, sign *= -1.0; }
+
+    while (x < -1.0) { x += 2.0, sign *= -1.0; }
+    while (x > 1.0) { x -= 2.0, sign *= -1.0; }
  
-    result = x;
-    for (size_t n = 1; ; n++) {
+    result = 0.0;
+    for (size_t n = 0 ;; n++) {
         double  term;
 
-        term = (ml_facti(2 * n) / (ml_powf(4, n) * ml_sqrf(ml_facti(n)) * (2 * n + 1))) * ml_powf(x, 2 * n + 1);
-        if (ml_absf(term) < 1e-6f) {
+        term = ((ml_powf(x, n) * ml_powf(x, 2 * n + 1)) / (2 * n + 1));
+        if (ml_absf(term) < ML_EPSILON) {
             break;
         }
 
         result += term;
     }
     return (result * sign);
-}
-
-ML_API double   ml_acosf(double x) { return (ml_deg2rad(90) - ml_asinf(x)); }
-
-ML_API double   ml_atanf(double x) {
-    double  result;
-
-    if (x > 1.0) { return (ML_PI / 2.0 - ml_atanf(1.0 / x)); }
-    else if (x < -1.0) { return (-ML_PI / 2.0 - ml_atanf(1.0 / x)); }
- 
-    result = 0.0;
-    for (size_t n = 0; ; n++) {
-        double  term;
-
-        term = ((ml_powf(-1, n)) / (2 * n + 1)) * ml_powf(x, 2 * n + 1);
-        if (ml_absf(term) < 1e-6f) {
-            break;
-        }
-
-        result += term;
-    }
-    return (result);
 }
 
 ML_API double   ml_acotf(double x) { return (ML_PI / 2.0 - ml_atanf(x)); }
@@ -1083,6 +1062,7 @@ ML_API double   ml_mat2_det(t_mat2 m) {
 
     result = m.m0 * m.m3;
     result -= m.m1 * m.m2;
+    return (result);
 }
 
 ML_API bool     ml_mat2_eq(t_mat2 a, t_mat2 b) {
@@ -1303,7 +1283,10 @@ ML_API t_mat4   ml_mat4_translate(t_vec3 v) {
 }
 
 ML_API t_mat4   ml_mat4_rotate(t_vec3 v, double angle) {
-
+    /* TODO */
+    (void) v;
+    (void) angle;
+    return (ml_mat4_zero());
 }
 
 ML_API t_mat4   ml_mat4_scale(t_vec3 v) {

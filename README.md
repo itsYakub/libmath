@@ -27,6 +27,18 @@ trigonometric and cyclometric functions, linear algebra, vector and matrix math 
 #define LM_INF 1e10000f
 #define lm_deg2rad(a) (a * (LM_PI / 180.0))
 #define lm_rad2deg(a) (a * (180.0 / LM_PI))
+
+/* ... */
+
+#define LM_COLOR_RED lm_col(0.9, 0.2, 0.2, 1.0)
+#define LM_COLOR_GREEN lm_col(0.2, 0.9, 0.2, 1.0)
+#define LM_COLOR_BLUE lm_col(0.2, 0.2, 0.9, 1.0)
+#define LM_COLOR_YELLOW lm_col(0.9, 0.9, 0.0, 1.0)
+#define LM_COLOR_MAGENTA lm_col(0.9, 0.0, 0.9, 1.0)
+#define LM_COLOR_CYAN lm_col(0.0, 0.9, 0.9, 1.0)
+#define LM_COLOR_WHITE lm_col(1.0, 1.0, 1.0, 1.0)
+#define LM_COLOR_BLACK lm_col(0.1, 0.1, 0.1, 1.0)
+#define LM_COLOR_BLANK lm_col(0.0, 0.0, 0.0, 0.0)
 ```
 
 ### Standard utilities:

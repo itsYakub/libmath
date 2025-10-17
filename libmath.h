@@ -275,6 +275,34 @@ LM_API int      lm_col2int(t_col);
 
 LM_API bool     lm_col_eq(t_col, t_col);
 
+# if !defined (LM_COLOR_RED)
+#  define LM_COLOR_RED lm_col(0.9, 0.2, 0.2, 1.0)
+# endif /* LM_COLOR_RED */
+# if !defined (LM_COLOR_GREEN)
+#  define LM_COLOR_GREEN lm_col(0.2, 0.9, 0.2, 1.0)
+# endif /* LM_COLOR_GREEN */
+# if !defined (LM_COLOR_BLUE)
+#  define LM_COLOR_BLUE lm_col(0.2, 0.2, 0.9, 1.0)
+# endif /* LM_COLOR_BLUE */
+# if !defined (LM_COLOR_YELLOW)
+#  define LM_COLOR_YELLOW lm_col(0.9, 0.9, 0.0, 1.0)
+# endif /* LM_COLOR_YELLOW */
+# if !defined (LM_COLOR_MAGENTA)
+#  define LM_COLOR_MAGENTA lm_col(0.9, 0.0, 0.9, 1.0)
+# endif /* LM_COLOR_MAGENTA */
+# if !defined (LM_COLOR_CYAN)
+#  define LM_COLOR_CYAN lm_col(0.0, 0.9, 0.9, 1.0)
+# endif /* LM_COLOR_CYAN */
+# if !defined (LM_COLOR_WHITE)
+#  define LM_COLOR_WHITE lm_col(1.0, 1.0, 1.0, 1.0)
+# endif /* LM_COLOR_WHITE */
+# if !defined (LM_COLOR_BLACK)
+#  define LM_COLOR_BLACK lm_col(0.1, 0.1, 0.1, 1.0)
+# endif /* LM_COLOR_BLACK */
+# if !defined (LM_COLOR_BLANK)
+#  define LM_COLOR_BLANK lm_col(0.0, 0.0, 0.0, 0.0)
+# endif /* LM_COLOR_BLANK */
+
 
 
 /* SECTION: t_mat2

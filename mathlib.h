@@ -3,11 +3,12 @@
 #endif /* __cplusplus */
 #if !defined _mathlib_h_
 # define _mathlib_h_
-# include <stdint.h>
+#
 # include <stddef.h>
 # if !defined (__cplusplus)
 #  include <stdbool.h>
 # endif /* __cplusplus */
+#
 # if !defined (ML_API)
 #  if defined (__cplusplus)
 #   define ML_API extern "C"
@@ -63,10 +64,10 @@ ML_API double   ml_lerpf_zo(double, double, double);
 ML_API double   ml_pow(double, size_t);
 ML_API double   ml_sqr(double);
 ML_API double   ml_sqrt(double);
-ML_API double	ml_fact(size_t);
-ML_API double	ml_fmod(double, double);
-ML_API double	ml_frac(double);
-ML_API double   ml_rand(double, double);
+ML_API double   ml_fmod(double, double);
+ML_API double   ml_frac(double);
+
+ML_API size_t   ml_fact(size_t);
 
 ML_API void     ml_swap(double *, double *);
 
@@ -378,23 +379,67 @@ ML_API bool     ml_mat4_eq(t_mat4, t_mat4);
 
 
 # if defined (MATHLIB_IMPLEMENTATION)
-
+#  if defined (ML_USE_STDLIB)
+#   include <math.h>
+#  endif /* ML_USE_STDLIB */
 
 
 /* SECTION: Standard Utilities
  * * * * * * * * * * * * * * */
 
-ML_API double   ml_min(double a, double b) { return (a < b ? a : b); }
+ML_API double   ml_min(double a, double b) {
 
-ML_API double   ml_max(double a, double b) { return (a > b ? a : b); }
+#  if defined (ML_USE_STDLIB)
+    return (fmin(a, b));
+#  endif /* ML_USE_STDLIB */
 
-ML_API double   ml_abs(double f) { return (f < 0.0 ? f * -1.0 : f); }
+    return (a < b ? a : b);
+}
 
-ML_API double   ml_ceil(double f) { return (ml_floor(f) + 1.0); }
+ML_API double   ml_max(double a, double b) {
 
-ML_API double   ml_floor(double f) { return (f - ml_frac(f)); }
+#  if defined (ML_USE_STDLIB)
+    return (fmax(a, b));
+#  endif /* ML_USE_STDLIB */
 
-ML_API double   ml_round(double f) { return ((f - (int) f) < 0.5 ? ml_floor(f) : ml_ceil(f)); }
+    return (a > b ? a : b);
+}
+
+ML_API double   ml_abs(double f) {
+
+#  if defined (ML_USE_STDLIB)
+    return (fabs(f));
+#  endif /* ML_USE_STDLIB */
+
+    return (f < 0.0 ? -f : f);
+}
+
+ML_API double   ml_ceil(double f) {
+
+#  if defined (ML_USE_STDLIB)
+    return (ceil(f));
+#  endif /* ML_USE_STDLIB */
+
+    return (ml_floor(f) + 1.0);
+}
+
+ML_API double   ml_floor(double f) {
+
+#  if defined (ML_USE_STDLIB)
+    return (floor(f));
+#  endif /* ML_USE_STDLIB */
+
+    return (f - ml_frac(f));
+}
+
+ML_API double   ml_round(double f) {
+
+#  if defined (ML_USE_STDLIB)
+    return (round(f));
+#  endif /* ML_USE_STDLIB */
+
+    return ((f - (int) f) < 0.5 ? ml_floor(f) : ml_ceil(f));
+}
 
 ML_API double   ml_clamp(double a, double min, double max) { return (ml_min(ml_max(a, min), max)); }
 
@@ -405,7 +450,12 @@ ML_API double   ml_lerp(double a, double b, double t) { return (a + t * (b - a))
 ML_API double   ml_lerpf_zo(double a, double b, double t) { return (ml_lerp(a, b, ml_clampf_zo(t))); }
 
 ML_API double   ml_pow(double base, size_t exp) {
-    double	result;
+
+#  if defined (ML_USE_STDLIB)
+    return (pow(base, exp));
+#  endif /* ML_USE_STDLIB */
+
+    double  result;
 
     if (!exp) { return (1); }
     result = base;
@@ -415,9 +465,21 @@ ML_API double   ml_pow(double base, size_t exp) {
     return (result);
 }
 
-ML_API double   ml_sqr(double base) { return (ml_pow(base, 2)); }
+ML_API double   ml_sqr(double base) {
+
+#  if defined (ML_USE_STDLIB)
+    return (sqr(base));
+#  endif /* ML_USE_STDLIB */
+
+    return (ml_pow(base, 2));
+}
 
 ML_API double   ml_sqrt(double value) {
+
+#  if defined (ML_USE_STDLIB)
+    return (sqrt(value));
+#  endif /* ML_USE_STDLIB */
+
 float   low, high, middle;
 
     /* imaginary-number scenario... */
@@ -438,31 +500,33 @@ float   low, high, middle;
     return (middle);
 }
 
-ML_API double	ml_fact(size_t value) {
-	double	result;
+ML_API double   ml_fmod(double a, double b) { return (a - (int) (a / b) * b); }
 
-	if ((ssize_t) value < 0) { return (0.0); }
-	else if (!value) { return (1.0); }
+ML_API double   ml_frac(double value) { return (value - (int) value); }
 
-	result = 1.0;
-	while (value) { result *= value, value--; }
 
-	return (result);
+
+ML_API size_t   ml_fact(size_t value) {
+    size_t  result;
+
+    if ((ssize_t) value < 0) { return (0); }
+    else if (!value) { return (1); }
+
+    result = 1.0;
+    while (value) { result *= value, value--; }
+
+    return (result);
 }
 
-ML_API double	ml_fmod(double a, double b) { return (a - (int) (a / b) * b); }
 
-ML_API double	ml_frac(double value) { return (value - (int) value); }
-
-ML_API double   ml_rand(double min, double max) { return (0); } /* TODO */
 
 ML_API void ml_swap(double *a, double *b) {
-	double	temp;
+    double  temp;
 
-	if (a == b) { return; }
-	temp = *a;
-	*a = *b;
-	*b = *a;
+    if (a == b) { return; }
+    temp = *a;
+    *a = *b;
+    *b = temp;
 }
 
 
@@ -471,15 +535,20 @@ ML_API void ml_swap(double *a, double *b) {
  * * * * * * * * * * * * */
 
 ML_API double   ml_sin(double x) {
-    double  result, sign;
 
+#  if defined (ML_USE_STDLIB)
+    return (sin(x));
+#  endif /* ML_USE_STDLIB */
+
+    double  result, sign;
+    
     sign = 1.0;
     while (x < -ML_PI / 2.0) { x += ML_PI, sign *= -1.0; }
     while (x > ML_PI / 2.0) { x -= ML_PI, sign *= -1.0; }
     
     result = 0.0;
     for (size_t n = 0 ;; n++) {
-        double	term;
+        double  term;
 
         term = (ml_pow(-1, n) / ml_fact(2 * n + 1)) * ml_pow(x, 2 * n + 1);
         if (ml_abs(term) < ML_EPSILON) {
@@ -491,36 +560,87 @@ ML_API double   ml_sin(double x) {
     return (result * sign);
 }
 
-ML_API double   ml_cos(double x) { return (ml_sin(ML_PI / 2.0 - x)); }
+ML_API double   ml_cos(double x) {
 
-ML_API double   ml_tan(double x) { return (ml_sin(x) / ml_cos(x)); }
+#  if defined (ML_USE_STDLIB)
+    return (cos(x));
+#  endif /* ML_USE_STDLIB */
 
-ML_API double   ml_cot(double x) { return (1 / ml_tan(x)); }
-
-ML_API double   ml_asin(double x) {
-	double	result, sign;
-
-	x = ml_abs(x);
-	sign = (x < 0.0) ? 1.0 : 0.0;
-	result = 
-	result = -0.0187293;
-	result *= x;
-	result += 0.0742610;
-	result *= x;
-	result -= 0.2121144;
-	result *= x;
-	result += 1.5707288;
-	result = ML_PI / 2.0 - ml_sqrt(1.0 - x) * result;
- 	return (result - 2.0 * sign* result);
+    return (ml_sin(ML_PI / 2.0 - x));
 }
 
-ML_API double   ml_acos(double x) { return (ML_PI / 2.0 - ml_asin(x)); }
+ML_API double   ml_tan(double x) {
 
-ML_API double   ml_atan(double x) { return (ml_asin(x / ml_sqrt(1 + x * x))); }
+#  if defined (ML_USE_STDLIB)
+    return (tan(x));
+#  endif /* ML_USE_STDLIB */
 
-ML_API double   ml_acot(double x) { return (ML_PI / 2.0 - ml_atan(x)); }
+    return (ml_sin(x) / ml_cos(x));
+}
+
+ML_API double   ml_cot(double x) {
+
+#  if defined (ML_USE_STDLIB)
+    return (tan(x));
+#  endif /* ML_USE_STDLIB */
+
+    return (1 / ml_tan(x));
+}
+
+ML_API double   ml_asin(double x) {
+
+#  if defined (ML_USE_STDLIB)
+    return (asin(x));
+#  endif /* ML_USE_STDLIB */
+
+    double  result, sign;
+
+    x = ml_abs(x);
+    sign = (x < 0.0) ? 1.0 : 0.0;
+    result = -0.0187293;
+    result *= x;
+    result += 0.0742610;
+    result *= x;
+    result -= 0.2121144;
+    result *= x;
+    result += 1.5707288;
+    result = ML_PI / 2.0 - ml_sqrt(1.0 - x) * result;
+    return (result - 2.0 * sign* result);
+}
+
+ML_API double   ml_acos(double x) {
+
+#  if defined (ML_USE_STDLIB)
+    return (acos(x));
+#  endif /* ML_USE_STDLIB */
+
+    return (ML_PI / 2.0 - ml_asin(x));
+}
+
+ML_API double   ml_atan(double x) {
+
+#  if defined (ML_USE_STDLIB)
+    return (atan(x));
+#  endif /* ML_USE_STDLIB */
+
+    return (ml_asin(x / ml_sqrt(1 + x * x)));
+}
+
+ML_API double   ml_acot(double x) {
+
+#  if defined (ML_USE_STDLIB)
+    return (acot(x));
+#  endif /* ML_USE_STDLIB */
+
+    return (ML_PI / 2.0 - ml_atan(x));
+}
 
 ML_API double   ml_atan2(double y, double x) {
+
+#  if defined (ML_USE_STDLIB)
+    return (atan2(y, x));
+#  endif /* ML_USE_STDLIB */
+
     if (x > 0.0) { return (ml_atan(y / x)); }
     else if (x < 0.0) {
         if (y >= 0.0) { return (ml_atan(y / x) + ML_PI); }

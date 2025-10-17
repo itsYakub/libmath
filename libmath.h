@@ -273,7 +273,7 @@ LM_API t_col    lm_col_uc(unsigned char, unsigned char, unsigned char, unsigned 
 LM_API t_col    lm_int2col(int);
 LM_API int      lm_col2int(t_col);
 
-LM_API bool     lm_vec4_eq(t_col, t_col);
+LM_API bool     lm_col_eq(t_col, t_col);
 
 
 
@@ -379,9 +379,9 @@ LM_API bool     lm_mat4_eq(t_mat4, t_mat4);
 
 
 # if defined (LIBMATH_IMPLEMENTATION)
-#  if defined (LM_USE_STDLIB)
+#  if defined (LIBMATH_USE_STDLIB)
 #   include <math.h>
-#  endif /* LM_USE_STDLIB */
+#  endif /* LIBMATH_USE_STDLIB */
 
 
 /* SECTION: Standard Utilities
@@ -389,54 +389,54 @@ LM_API bool     lm_mat4_eq(t_mat4, t_mat4);
 
 LM_API double   lm_min(double a, double b) {
 
-#  if defined (LM_USE_STDLIB)
+#  if defined (LIBMATH_USE_STDLIB)
     return (fmin(a, b));
-#  endif /* LM_USE_STDLIB */
+#  endif /* LIBMATH_USE_STDLIB */
 
     return (a < b ? a : b);
 }
 
 LM_API double   lm_max(double a, double b) {
 
-#  if defined (LM_USE_STDLIB)
+#  if defined (LIBMATH_USE_STDLIB)
     return (fmax(a, b));
-#  endif /* LM_USE_STDLIB */
+#  endif /* LIBMATH_USE_STDLIB */
 
     return (a > b ? a : b);
 }
 
 LM_API double   lm_abs(double f) {
 
-#  if defined (LM_USE_STDLIB)
+#  if defined (LIBMATH_USE_STDLIB)
     return (fabs(f));
-#  endif /* LM_USE_STDLIB */
+#  endif /* LIBMATH_USE_STDLIB */
 
     return (f < 0.0 ? -f : f);
 }
 
 LM_API double   lm_ceil(double f) {
 
-#  if defined (LM_USE_STDLIB)
+#  if defined (LIBMATH_USE_STDLIB)
     return (ceil(f));
-#  endif /* LM_USE_STDLIB */
+#  endif /* LIBMATH_USE_STDLIB */
 
     return (lm_floor(f) + 1.0);
 }
 
 LM_API double   lm_floor(double f) {
 
-#  if defined (LM_USE_STDLIB)
+#  if defined (LIBMATH_USE_STDLIB)
     return (floor(f));
-#  endif /* LM_USE_STDLIB */
+#  endif /* LIBMATH_USE_STDLIB */
 
     return (f - lm_frac(f));
 }
 
 LM_API double   lm_round(double f) {
 
-#  if defined (LM_USE_STDLIB)
+#  if defined (LIBMATH_USE_STDLIB)
     return (round(f));
-#  endif /* LM_USE_STDLIB */
+#  endif /* LIBMATH_USE_STDLIB */
 
     return ((f - (int) f) < 0.5 ? lm_floor(f) : lm_ceil(f));
 }
@@ -451,9 +451,9 @@ LM_API double   lm_lerpf_zo(double a, double b, double t) { return (lm_lerp(a, b
 
 LM_API double   lm_pow(double base, size_t exp) {
 
-#  if defined (LM_USE_STDLIB)
+#  if defined (LIBMATH_USE_STDLIB)
     return (pow(base, exp));
-#  endif /* LM_USE_STDLIB */
+#  endif /* LIBMATH_USE_STDLIB */
 
     double  result;
 
@@ -467,18 +467,18 @@ LM_API double   lm_pow(double base, size_t exp) {
 
 LM_API double   lm_sqr(double base) {
 
-#  if defined (LM_USE_STDLIB)
+#  if defined (LIBMATH_USE_STDLIB)
     return (sqr(base));
-#  endif /* LM_USE_STDLIB */
+#  endif /* LIBMATH_USE_STDLIB */
 
     return (lm_pow(base, 2));
 }
 
 LM_API double   lm_sqrt(double value) {
 
-#  if defined (LM_USE_STDLIB)
+#  if defined (LIBMATH_USE_STDLIB)
     return (sqrt(value));
-#  endif /* LM_USE_STDLIB */
+#  endif /* LIBMATH_USE_STDLIB */
 
 float   low, high, middle;
 
@@ -509,7 +509,7 @@ LM_API double   lm_frac(double value) { return (value - (int) value); }
 LM_API size_t   lm_fact(size_t value) {
     size_t  result;
 
-    if ((ssize_t) value < 0) { return (0); }
+    if ((long long) value < 0) { return (0); }
     else if (!value) { return (1); }
 
     result = 1.0;
@@ -536,9 +536,9 @@ LM_API void lm_swap(double *a, double *b) {
 
 LM_API double   lm_sin(double x) {
 
-#  if defined (LM_USE_STDLIB)
+#  if defined (LIBMATH_USE_STDLIB)
     return (sin(x));
-#  endif /* LM_USE_STDLIB */
+#  endif /* LIBMATH_USE_STDLIB */
 
     double  result, sign;
     
@@ -562,36 +562,36 @@ LM_API double   lm_sin(double x) {
 
 LM_API double   lm_cos(double x) {
 
-#  if defined (LM_USE_STDLIB)
+#  if defined (LIBMATH_USE_STDLIB)
     return (cos(x));
-#  endif /* LM_USE_STDLIB */
+#  endif /* LIBMATH_USE_STDLIB */
 
     return (lm_sin(LM_PI / 2.0 - x));
 }
 
 LM_API double   lm_tan(double x) {
 
-#  if defined (LM_USE_STDLIB)
+#  if defined (LIBMATH_USE_STDLIB)
     return (tan(x));
-#  endif /* LM_USE_STDLIB */
+#  endif /* LIBMATH_USE_STDLIB */
 
     return (lm_sin(x) / lm_cos(x));
 }
 
 LM_API double   lm_cot(double x) {
 
-#  if defined (LM_USE_STDLIB)
+#  if defined (LIBMATH_USE_STDLIB)
     return (tan(x));
-#  endif /* LM_USE_STDLIB */
+#  endif /* LIBMATH_USE_STDLIB */
 
     return (1 / lm_tan(x));
 }
 
 LM_API double   lm_asin(double x) {
 
-#  if defined (LM_USE_STDLIB)
+#  if defined (LIBMATH_USE_STDLIB)
     return (asin(x));
-#  endif /* LM_USE_STDLIB */
+#  endif /* LIBMATH_USE_STDLIB */
 
     double  result, sign;
 
@@ -610,36 +610,36 @@ LM_API double   lm_asin(double x) {
 
 LM_API double   lm_acos(double x) {
 
-#  if defined (LM_USE_STDLIB)
+#  if defined (LIBMATH_USE_STDLIB)
     return (acos(x));
-#  endif /* LM_USE_STDLIB */
+#  endif /* LIBMATH_USE_STDLIB */
 
     return (LM_PI / 2.0 - lm_asin(x));
 }
 
 LM_API double   lm_atan(double x) {
 
-#  if defined (LM_USE_STDLIB)
+#  if defined (LIBMATH_USE_STDLIB)
     return (atan(x));
-#  endif /* LM_USE_STDLIB */
+#  endif /* LIBMATH_USE_STDLIB */
 
     return (lm_asin(x / lm_sqrt(1 + x * x)));
 }
 
 LM_API double   lm_acot(double x) {
 
-#  if defined (LM_USE_STDLIB)
+#  if defined (LIBMATH_USE_STDLIB)
     return (acot(x));
-#  endif /* LM_USE_STDLIB */
+#  endif /* LIBMATH_USE_STDLIB */
 
     return (LM_PI / 2.0 - lm_atan(x));
 }
 
 LM_API double   lm_atan2(double y, double x) {
 
-#  if defined (LM_USE_STDLIB)
+#  if defined (LIBMATH_USE_STDLIB)
     return (atan2(y, x));
-#  endif /* LM_USE_STDLIB */
+#  endif /* LIBMATH_USE_STDLIB */
 
     if (x > 0.0) { return (lm_atan(y / x)); }
     else if (x < 0.0) {

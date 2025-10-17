@@ -1,7 +1,7 @@
 # ========
 
 MK_ROOT		= $(dir $(realpath $(firstword $(MAKEFILE_LIST))))
-MK_NAME		= mathlib
+MK_NAME		= libmath
 TARGET		= $(MK_ROOT)$(MK_NAME).h
 
 # ========

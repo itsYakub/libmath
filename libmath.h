@@ -448,7 +448,7 @@ LM_API double   lm_ceil(double f) {
     return (ceil(f));
 #  endif /* LIBMATH_USE_STDLIB */
 
-    return (lm_floor(f) + 1.0);
+    return ((int) f + 1.0);
 }
 
 LM_API double   lm_floor(double f) {
@@ -457,7 +457,7 @@ LM_API double   lm_floor(double f) {
     return (floor(f));
 #  endif /* LIBMATH_USE_STDLIB */
 
-    return (f - lm_frac(f));
+    return ((int) f);
 }
 
 LM_API double   lm_round(double f) {
@@ -466,7 +466,7 @@ LM_API double   lm_round(double f) {
     return (round(f));
 #  endif /* LIBMATH_USE_STDLIB */
 
-    return ((f - (int) f) < 0.5 ? lm_floor(f) : lm_ceil(f));
+    return (ml_frac(f)) < 0.5 ? lm_floor(f) : lm_ceil(f));
 }
 
 LM_API double   lm_clamp(double a, double min, double max) { return (lm_min(lm_max(a, min), max)); }
@@ -499,7 +499,7 @@ LM_API double   lm_sqr(double base) {
     return (sqr(base));
 #  endif /* LIBMATH_USE_STDLIB */
 
-    return (lm_pow(base, 2));
+    return (base * base);
 }
 
 LM_API double   lm_sqrt(double value) {
@@ -633,7 +633,7 @@ LM_API double   lm_asin(double x) {
     result *= x;
     result += 1.5707288;
     result = LM_PI / 2.0 - lm_sqrt(1.0 - x) * result;
-    return (result - 2.0 * sign* result);
+    return (result - 2.0 * sign * result);
 }
 
 LM_API double   lm_acos(double x) {

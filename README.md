@@ -11,6 +11,11 @@ trigonometric and cyclometric functions, linear algebra, vector and matrix math 
  *      Include the implementation section of the header into the source file.
  *      NOTE: This macro should defined only ONCE in your program. Otherwise we'd cause a "multiple definition of..." error.
  *
+ *
+ *  #define LIBMATH_API:
+ *      API Keyword for libmath functions. It allows for custom functions behaviour at a compilation stage
+ *      (example: inlining, externing etc.).
+ *
  *  #define LIBMATH_USE_STDLIB:
  *      If defined, some libmath functions will default back to the standard library's math module.
  */
@@ -24,7 +29,7 @@ trigonometric and cyclometric functions, linear algebra, vector and matrix math 
 #define LM_PI 3.14159265358979323846
 #define LM_EPSILON 1e-6f
 #define LM_NAN (0.0 / 0.0)
-#define LM_INF 1e10000f
+#define LM_INFINITY 1e10000f
 #define lm_deg2rad(a) (a * (LM_PI / 180.0))
 #define lm_rad2deg(a) (a * (180.0 / LM_PI))
 
@@ -278,6 +283,7 @@ LM_API t_mat4   lm_mat4_mulv(t_mat4, double);
 LM_API t_mat4   lm_mat4_translate(t_vec3);
 LM_API t_mat4   lm_mat4_rotate(t_vec3, double);
 LM_API t_mat4   lm_mat4_scale(t_vec3);
+
 LM_API double   lm_mat4_det(t_mat4);
 
 LM_API t_mat4   lm_mat4_ortho(double, double, double, double, double, double);

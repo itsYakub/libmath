@@ -270,8 +270,8 @@ typedef union u_vec4    t_col;
 LIBMATH_API t_col   lm_col(double, double, double, double);
 LIBMATH_API t_col   lm_col_uc(unsigned char, unsigned char, unsigned char, unsigned char);
 
-LIBMATH_API t_col   lm_int2col(int);
-LIBMATH_API int     lm_col2int(t_col);
+LIBMATH_API t_col   lm_col_from_int(int);
+LIBMATH_API int     lm_col_to_int(t_col);
 
 LIBMATH_API bool    lm_col_eq(t_col, t_col);
 
@@ -1053,7 +1053,7 @@ LIBMATH_API t_col   lm_col(double r, double g, double b, double a) { return (lm_
 
 LIBMATH_API t_col   lm_col_uc(unsigned char r, unsigned char g, unsigned char b, unsigned char a) { return (lm_col(r / 255.0, g / 255.0, b / 255.0, a / 255.0)); }
 
-LIBMATH_API t_col   lm_int2col(int i) {
+LIBMATH_API t_col   lm_col_from_int(int i) {
     unsigned char   r, g, b, a;
 
     r = (i >> (8 * 0)) & 0xff;
@@ -1063,7 +1063,7 @@ LIBMATH_API t_col   lm_int2col(int i) {
     return (lm_col_uc(r, g, b, a));
 }
 
-LIBMATH_API int     lm_col2int(t_col col) {
+LIBMATH_API int     lm_col_to_int(t_col col) {
     return ((int) (col.r * 255.0) << 0 | (int) (col.g * 255.0) << 8 | (int) (col.b * 255.0) << 16 | (int) (col.a * 255.0) << 24);
 }
 
@@ -1371,9 +1371,9 @@ LIBMATH_API t_mat4  lm_mat4_scale(t_vec3 v) {
     t_mat4  result;
 
     result = lm_mat4_identity();
-    result.[0][0] = v.x;
-    result.[1][1] = v.y;
-    result.[2][2] = v.z;
+    result.ptr[0][0] = v.x;
+    result.ptr[1][1] = v.y;
+    result.ptr[2][2] = v.z;
     return (result);
 }
 

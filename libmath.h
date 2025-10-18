@@ -19,7 +19,7 @@
 
 
 
-/* SECTION: constants
+/* SECTION: Constants
  * * * * * * * * * * */
 
 # if !defined (LM_PI)
@@ -326,11 +326,6 @@ LM_API t_mat2   lm_mat2_sub(t_mat2, t_mat2);
 LM_API t_mat2   lm_mat2_mul(t_mat2, t_mat2);
 LM_API t_mat2   lm_mat2_mulv(t_mat2, double);
 
-/*
-LM_API t_mat2   lm_mat2_translate(t_vec2);
-LM_API t_mat2   lm_mat2_rotate(t_vec2, double);
-LM_API t_mat2   lm_mat2_scale(t_vec2);
-*/
 LM_API double   lm_mat2_det(t_mat2);
 
 LM_API bool     lm_mat2_eq(t_mat2, t_mat2);
@@ -359,11 +354,6 @@ LM_API t_mat3   lm_mat3_sub(t_mat3, t_mat3);
 LM_API t_mat3   lm_mat3_mul(t_mat3, t_mat3);
 LM_API t_mat3   lm_mat3_mulv(t_mat3, double);
 
-/*
-LM_API t_mat3   lm_mat3_translate(t_vec3);
-LM_API t_mat3   lm_mat3_rotate(t_vec3, double);
-LM_API t_mat3   lm_mat3_scale(t_vec3);
-*/
 LM_API double   lm_mat3_det(t_mat3);
 
 LM_API bool     lm_mat3_eq(t_mat3, t_mat3);
@@ -394,8 +384,9 @@ LM_API t_mat4   lm_mat4_mul(t_mat4, t_mat4);
 LM_API t_mat4   lm_mat4_mulv(t_mat4, double);
 
 LM_API t_mat4   lm_mat4_translate(t_vec3);
-LM_API t_mat4   lm_mat4_rotate(t_vec3, double);
 LM_API t_mat4   lm_mat4_scale(t_vec3);
+LM_API t_mat4   lm_mat4_rotate(t_vec3, double);
+
 LM_API double   lm_mat4_det(t_mat4);
 
 LM_API t_mat4   lm_mat4_ortho(double, double, double, double, double, double);
@@ -466,7 +457,7 @@ LM_API double   lm_round(double f) {
     return (round(f));
 #  endif /* LIBMATH_USE_STDLIB */
 
-    return (ml_frac(f)) < 0.5 ? lm_floor(f) : lm_ceil(f));
+    return ((lm_frac(f) < 0.5 ? lm_floor(f) : lm_ceil(f)));
 }
 
 LM_API double   lm_clamp(double a, double min, double max) { return (lm_min(lm_max(a, min), max)); }
@@ -1370,26 +1361,53 @@ LM_API t_mat4   lm_mat4_translate(t_vec3 v) {
     t_mat4  result;
 
     result = lm_mat4_identity();
-    result.m3 = v.x;
-    result.m7 = v.y;
-    result.m11 = v.z;
+    result.ptr[0][3] = v.x;
+    result.ptr[1][3] = v.y;
+    result.ptr[2][3] = v.z;
     return (result);
-}
-
-LM_API t_mat4   lm_mat4_rotate(t_vec3 v, double angle) {
-    /* TODO */
-    (void) v;
-    (void) angle;
-    return (lm_mat4_zero());
 }
 
 LM_API t_mat4   lm_mat4_scale(t_vec3 v) {
     t_mat4  result;
 
     result = lm_mat4_identity();
-    result.m0 = v.x;
-    result.m5 = v.y;
-    result.m10 = v.z;
+    result.[0][0] = v.x;
+    result.[1][1] = v.y;
+    result.[2][2] = v.z;
+    return (result);
+}
+
+LM_API t_mat4   lm_mat4_rotate(t_vec3 v, double angle) {
+    t_mat4  result;
+    double  x, y, z;
+    double  len;
+    double  sinres, cosres, t;
+
+    sinres = lm_sin(angle);
+    cosres = lm_cos(angle);
+    t = 1.0 - cosres;
+
+    x = v.x, y = v.y, z = v.z;
+    len = lm_vec3_len_sqr(v);
+    if (len != 1.0 && len != 0.0) {
+        len = 1.0 / lm_sqrt(len);
+        x *= len;
+        y *= len;
+        z *= len;
+    }
+
+    result = lm_mat4_identity();
+    result.ptr[0][0] = x * x * t + cosres;
+    result.ptr[0][1] = y * x * t + z * sinres;
+    result.ptr[0][2] = z * x * t - y * sinres;
+
+    result.ptr[1][0] = x * y * t - z * sinres;
+    result.ptr[1][1] = y * y * t + cosres;
+    result.ptr[1][2] = z * y * t + x * sinres;
+    
+    result.ptr[2][0] = x * z * t + y * sinres;
+    result.ptr[2][1] = y * z * t - x * sinres;
+    result.ptr[2][2] = z * z * t + cosres;
     return (result);
 }
 

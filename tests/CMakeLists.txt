@@ -16,12 +16,8 @@ FetchContent_MakeAvailable(googletest)
 
 enable_testing()
 
-add_executable(test-utils test-utils.cc)
-
-target_link_libraries(
-	test-utils
-	GTest::gtest_main
-)
+add_executable(test-trigon test-trigon.cc)
+target_link_libraries(test-trigon GTest::gtest_main)
 
 include(GoogleTest)
-gtest_discover_tests(test-utils)
+gtest_discover_tests(test-trigon)

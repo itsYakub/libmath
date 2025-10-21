@@ -487,7 +487,7 @@ LIBMATH_API float   lm_pow(float  base, size_t exp) {
 LIBMATH_API float   lm_sqr(float  base) {
 
 #  if defined (LIBMATH_USE_STDLIB)
-    return (sqr(base));
+    return (pow(base, 2));
 #  endif /* LIBMATH_USE_STDLIB */
 
     return (base * base);
@@ -585,7 +585,7 @@ LIBMATH_API float   lm_cos(float  x) {
     return (cos(x));
 #  endif /* LIBMATH_USE_STDLIB */
 
-    return (lm_sin(LM_PI / 2.0 - x));
+    return (lm_sin(lm_deg2rad(90) - x));
 }
 
 LIBMATH_API float   lm_tan(float  x) {
@@ -645,14 +645,7 @@ LIBMATH_API float   lm_atan(float  x) {
     return (lm_asin(x / lm_sqrt(1 + x * x)));
 }
 
-LIBMATH_API float   lm_acot(float  x) {
-
-#  if defined (LIBMATH_USE_STDLIB)
-    return (acot(x));
-#  endif /* LIBMATH_USE_STDLIB */
-
-    return (LM_PI / 2.0 - lm_atan(x));
-}
+LIBMATH_API float   lm_acot(float  x) { return (LM_PI / 2.0 - lm_atan(x)); }
 
 LIBMATH_API float   lm_atan2(float  y, float  x) {
 

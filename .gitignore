@@ -10,6 +10,10 @@
 *.app
 *.elf
 
+# build directory
+bin/
+build/
+
 # editor files
 .*.sw*
 .vscode/

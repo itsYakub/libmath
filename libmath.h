@@ -51,40 +51,40 @@ extern "C" {
 /* SECTION: Standard Utilities
  * * * * * * * * * * * * * * */
 
-LIBMATH_API double  lm_min(double, double);
-LIBMATH_API double  lm_max(double, double);
-LIBMATH_API double  lm_abs(double);
-LIBMATH_API double  lm_ceil(double);
-LIBMATH_API double  lm_floor(double);
-LIBMATH_API double  lm_round(double);
-LIBMATH_API double  lm_clamp(double, double, double);
-LIBMATH_API double  lm_clampf_zo(double);
-LIBMATH_API double  lm_lerp(double, double, double);
-LIBMATH_API double  lm_lerpf_zo(double, double, double);
-LIBMATH_API double  lm_pow(double, size_t);
-LIBMATH_API double  lm_sqr(double);
-LIBMATH_API double  lm_sqrt(double);
-LIBMATH_API double  lm_fmod(double, double);
-LIBMATH_API double  lm_frac(double);
+LIBMATH_API float   lm_min(float, float);
+LIBMATH_API float   lm_max(float, float);
+LIBMATH_API float   lm_abs(float);
+LIBMATH_API float   lm_ceil(float);
+LIBMATH_API float   lm_floor(float);
+LIBMATH_API float   lm_round(float);
+LIBMATH_API float   lm_clamp(float, float, float);
+LIBMATH_API float   lm_clampf_zo(float);
+LIBMATH_API float   lm_lerp(float, float, float);
+LIBMATH_API float   lm_lerpf_zo(float, float, float);
+LIBMATH_API float   lm_pow(float, size_t);
+LIBMATH_API float   lm_sqr(float);
+LIBMATH_API float   lm_sqrt(float);
+LIBMATH_API float   lm_fmod(float, float);
+LIBMATH_API float   lm_frac(float);
 
 LIBMATH_API size_t  lm_fact(size_t);
 
-LIBMATH_API void    lm_swap(double *, double *);
+LIBMATH_API void    lm_swap(float  *, float  *);
 
 
 
 /* SECTION: Trigonometric
  * * * * * * * * * * * * */
 
-LIBMATH_API double  lm_sin(double);
-LIBMATH_API double  lm_cos(double);
-LIBMATH_API double  lm_tan(double);
-LIBMATH_API double  lm_cot(double);
-LIBMATH_API double  lm_asin(double);
-LIBMATH_API double  lm_acos(double);
-LIBMATH_API double  lm_atan(double);
-LIBMATH_API double  lm_acot(double);
-LIBMATH_API double  lm_atan2(double, double);
+LIBMATH_API float   lm_sin(float);
+LIBMATH_API float   lm_cos(float);
+LIBMATH_API float   lm_tan(float);
+LIBMATH_API float   lm_cot(float);
+LIBMATH_API float   lm_asin(float);
+LIBMATH_API float   lm_acos(float);
+LIBMATH_API float   lm_atan(float);
+LIBMATH_API float   lm_acot(float);
+LIBMATH_API float   lm_atan2(float, float);
 
 
 
@@ -93,44 +93,44 @@ LIBMATH_API double  lm_atan2(double, double);
 
 union u_vec2 {
     struct {
-        double  x;
-        double  y;
+        float   x;
+        float   y;
     };
     struct {
-        double  w;
-        double  h;
+        float   w;
+        float   h;
     };
-    double      ptr[2];
+    float       ptr[2];
 };
 
 typedef union u_vec2    t_vec2;
 
-LIBMATH_API t_vec2  lm_vec2(double, double);
+LIBMATH_API t_vec2  lm_vec2(float, float);
 LIBMATH_API t_vec2  lm_vec2_zero(void);
 LIBMATH_API t_vec2  lm_vec2_cpy(t_vec2);
 LIBMATH_API t_vec2  lm_vec2_add(t_vec2, t_vec2);
-LIBMATH_API t_vec2  lm_vec2_addv(t_vec2, double);
+LIBMATH_API t_vec2  lm_vec2_addv(t_vec2, float);
 LIBMATH_API t_vec2  lm_vec2_sub(t_vec2, t_vec2);
-LIBMATH_API t_vec2  lm_vec2_subv(t_vec2, double);
+LIBMATH_API t_vec2  lm_vec2_subv(t_vec2, float);
 LIBMATH_API t_vec2  lm_vec2_mul(t_vec2, t_vec2);
-LIBMATH_API t_vec2  lm_vec2_mulv(t_vec2, double);
+LIBMATH_API t_vec2  lm_vec2_mulv(t_vec2, float);
 LIBMATH_API t_vec2  lm_vec2_div(t_vec2, t_vec2);
-LIBMATH_API t_vec2  lm_vec2_divv(t_vec2, double);
+LIBMATH_API t_vec2  lm_vec2_divv(t_vec2, float);
 
 LIBMATH_API t_vec2  lm_vec2_clamp(t_vec2, t_vec2, t_vec2);
 LIBMATH_API t_vec2  lm_vec2_clamp_zo(t_vec2);
-LIBMATH_API t_vec2  lm_vec2_clamp_val(t_vec2, double, double);
-LIBMATH_API t_vec2  lm_vec2_lerp(t_vec2, t_vec2, double);
-LIBMATH_API t_vec2  lm_vec2_lerp_zo(t_vec2, t_vec2, double);
+LIBMATH_API t_vec2  lm_vec2_clamp_val(t_vec2, float, float);
+LIBMATH_API t_vec2  lm_vec2_lerp(t_vec2, t_vec2, float);
+LIBMATH_API t_vec2  lm_vec2_lerp_zo(t_vec2, t_vec2, float);
 LIBMATH_API t_vec2  lm_vec2_dir(t_vec2, t_vec2);
-LIBMATH_API t_vec2  lm_vec2_move_towards(t_vec2, t_vec2, double);
+LIBMATH_API t_vec2  lm_vec2_move_towards(t_vec2, t_vec2, float);
 LIBMATH_API t_vec2  lm_vec2_normalize(t_vec2);
 
-LIBMATH_API double  lm_vec2_dist(t_vec2, t_vec2);
-LIBMATH_API double  lm_vec2_dist_sqr(t_vec2, t_vec2);
-LIBMATH_API double  lm_vec2_len(t_vec2);
-LIBMATH_API double  lm_vec2_len_sqr(t_vec2);
-LIBMATH_API double  lm_vec2_ang(t_vec2, t_vec2);
+LIBMATH_API float   lm_vec2_dist(t_vec2, t_vec2);
+LIBMATH_API float   lm_vec2_dist_sqr(t_vec2, t_vec2);
+LIBMATH_API float   lm_vec2_len(t_vec2);
+LIBMATH_API float   lm_vec2_len_sqr(t_vec2);
+LIBMATH_API float   lm_vec2_ang(t_vec2, t_vec2);
 
 LIBMATH_API bool    lm_vec2_eq(t_vec2, t_vec2);
 
@@ -141,52 +141,52 @@ LIBMATH_API bool    lm_vec2_eq(t_vec2, t_vec2);
 
 union u_vec3 {
     struct {
-        double  x;
-        double  y;
-        double  z;
+        float   x;
+        float   y;
+        float   z;
     };
     struct {
-        double  w;
-        double  h;
-        double  l;
+        float   w;
+        float   h;
+        float   l;
     };
     struct {
-        double  r;
-        double  g;
-        double  b;
+        float   r;
+        float   g;
+        float   b;
     };
-    double      ptr[3];
+    float       ptr[3];
 };
 
 typedef union u_vec3    t_vec3;
 
-LIBMATH_API t_vec3  lm_vec3(double, double, double);
+LIBMATH_API t_vec3  lm_vec3(float, float, float);
 LIBMATH_API t_vec3  lm_vec3_zero(void);
 LIBMATH_API t_vec3  lm_vec3_cpy(t_vec3);
 LIBMATH_API t_vec3  lm_vec3_add(t_vec3, t_vec3);
-LIBMATH_API t_vec3  lm_vec3_addv(t_vec3, double);
+LIBMATH_API t_vec3  lm_vec3_addv(t_vec3, float);
 LIBMATH_API t_vec3  lm_vec3_sub(t_vec3, t_vec3);
-LIBMATH_API t_vec3  lm_vec3_subv(t_vec3, double);
+LIBMATH_API t_vec3  lm_vec3_subv(t_vec3, float);
 LIBMATH_API t_vec3  lm_vec3_mul(t_vec3, t_vec3);
-LIBMATH_API t_vec3  lm_vec3_mulv(t_vec3, double);
+LIBMATH_API t_vec3  lm_vec3_mulv(t_vec3, float);
 LIBMATH_API t_vec3  lm_vec3_div(t_vec3, t_vec3);
-LIBMATH_API t_vec3  lm_vec3_divv(t_vec3, double);
+LIBMATH_API t_vec3  lm_vec3_divv(t_vec3, float);
 
 LIBMATH_API t_vec3  lm_vec3_clamp(t_vec3, t_vec3, t_vec3);
 LIBMATH_API t_vec3  lm_vec3_clamp_zo(t_vec3);
-LIBMATH_API t_vec3  lm_vec3_clamp_val(t_vec3, double, double);
-LIBMATH_API t_vec3  lm_vec3_lerp(t_vec3, t_vec3, double);
-LIBMATH_API t_vec3  lm_vec3_lerp_zo(t_vec3, t_vec3, double);
-LIBMATH_API t_vec3  lm_vec3_move_towards(t_vec3, t_vec3, double);
+LIBMATH_API t_vec3  lm_vec3_clamp_val(t_vec3, float, float);
+LIBMATH_API t_vec3  lm_vec3_lerp(t_vec3, t_vec3, float);
+LIBMATH_API t_vec3  lm_vec3_lerp_zo(t_vec3, t_vec3, float);
+LIBMATH_API t_vec3  lm_vec3_move_towards(t_vec3, t_vec3, float);
 LIBMATH_API t_vec3  lm_vec3_cross(t_vec3, t_vec3);
 LIBMATH_API t_vec3  lm_vec3_normalize(t_vec3);
 
-LIBMATH_API double  lm_vec3_dist(t_vec3, t_vec3);
-LIBMATH_API double  lm_vec3_dist_sqr(t_vec3, t_vec3);
-LIBMATH_API double  lm_vec3_len(t_vec3);
-LIBMATH_API double  lm_vec3_len_sqr(t_vec3);
-LIBMATH_API double  lm_vec3_ang(t_vec3, t_vec3);
-LIBMATH_API double  lm_vec3_dot(t_vec3, t_vec3);
+LIBMATH_API float   lm_vec3_dist(t_vec3, t_vec3);
+LIBMATH_API float   lm_vec3_dist_sqr(t_vec3, t_vec3);
+LIBMATH_API float   lm_vec3_len(t_vec3);
+LIBMATH_API float   lm_vec3_len_sqr(t_vec3);
+LIBMATH_API float   lm_vec3_ang(t_vec3, t_vec3);
+LIBMATH_API float   lm_vec3_dot(t_vec3, t_vec3);
 
 LIBMATH_API bool    lm_vec3_eq(t_vec3, t_vec3);
 
@@ -197,51 +197,51 @@ LIBMATH_API bool    lm_vec3_eq(t_vec3, t_vec3);
 
 union u_vec4 {
     struct {
-        double  x;
-        double  y;
-        double  z;
-        double  w;
+        float   x;
+        float   y;
+        float   z;
+        float   w;
     };
     struct {
-        double  r;
-        double  g;
-        double  b;
-        double  a;
+        float   r;
+        float   g;
+        float   b;
+        float   a;
     };
     struct {
         t_vec2  pos;
         t_vec2  siz;
     };
-    double      ptr[4];
+    float       ptr[4];
 };
 
 typedef union u_vec4    t_vec4;
 
-LIBMATH_API t_vec4  lm_vec4(double, double, double, double);
+LIBMATH_API t_vec4  lm_vec4(float, float, float, float);
 LIBMATH_API t_vec4  lm_vec4_zero(void);
 LIBMATH_API t_vec4  lm_vec4_cpy(t_vec4);
 LIBMATH_API t_vec4  lm_vec4_add(t_vec4, t_vec4);
-LIBMATH_API t_vec4  lm_vec4_addv(t_vec4, double);
+LIBMATH_API t_vec4  lm_vec4_addv(t_vec4, float);
 LIBMATH_API t_vec4  lm_vec4_sub(t_vec4, t_vec4);
-LIBMATH_API t_vec4  lm_vec4_subv(t_vec4, double);
+LIBMATH_API t_vec4  lm_vec4_subv(t_vec4, float);
 LIBMATH_API t_vec4  lm_vec4_mul(t_vec4, t_vec4);
-LIBMATH_API t_vec4  lm_vec4_mulv(t_vec4, double);
+LIBMATH_API t_vec4  lm_vec4_mulv(t_vec4, float);
 LIBMATH_API t_vec4  lm_vec4_div(t_vec4, t_vec4);
-LIBMATH_API t_vec4  lm_vec4_divv(t_vec4, double);
+LIBMATH_API t_vec4  lm_vec4_divv(t_vec4, float);
 
 LIBMATH_API t_vec4  lm_vec4_clamp(t_vec4, t_vec4, t_vec4);
 LIBMATH_API t_vec4  lm_vec4_clamp_zo(t_vec4);
-LIBMATH_API t_vec4  lm_vec4_clamp_val(t_vec4, double, double);
-LIBMATH_API t_vec4  lm_vec4_lerp(t_vec4, t_vec4, double);
-LIBMATH_API t_vec4  lm_vec4_lerp_zo(t_vec4, t_vec4, double);
+LIBMATH_API t_vec4  lm_vec4_clamp_val(t_vec4, float, float);
+LIBMATH_API t_vec4  lm_vec4_lerp(t_vec4, t_vec4, float);
+LIBMATH_API t_vec4  lm_vec4_lerp_zo(t_vec4, t_vec4, float);
 LIBMATH_API t_vec4  lm_vec4_dir(t_vec4, t_vec4);
-LIBMATH_API t_vec4  lm_vec4_move_towards(t_vec4, t_vec4, double);
+LIBMATH_API t_vec4  lm_vec4_move_towards(t_vec4, t_vec4, float);
 LIBMATH_API t_vec4  lm_vec4_normalize(t_vec4);
 
-LIBMATH_API double  lm_vec4_dist(t_vec4, t_vec4);
-LIBMATH_API double  lm_vec4_dist_sqr(t_vec4, t_vec4);
-LIBMATH_API double  lm_vec4_len(t_vec4);
-LIBMATH_API double  lm_vec4_len_sqr(t_vec4);
+LIBMATH_API float   lm_vec4_dist(t_vec4, t_vec4);
+LIBMATH_API float   lm_vec4_dist_sqr(t_vec4, t_vec4);
+LIBMATH_API float   lm_vec4_len(t_vec4);
+LIBMATH_API float   lm_vec4_len_sqr(t_vec4);
 
 LIBMATH_API bool    lm_vec4_eq(t_vec4, t_vec4);
 
@@ -252,7 +252,7 @@ LIBMATH_API bool    lm_vec4_eq(t_vec4, t_vec4);
 
 typedef union u_vec4    t_rect;
 
-LIBMATH_API t_rect  lm_rect(double, double, double, double);
+LIBMATH_API t_rect  lm_rect(float, float, float, float);
 LIBMATH_API t_rect  lm_rect_zero(void);
 LIBMATH_API t_rect  lm_rect_vec2(t_vec2, t_vec2);
 LIBMATH_API bool    lm_rect_aabb(t_rect, t_rect);
@@ -267,7 +267,7 @@ LIBMATH_API bool    lm_rect_eq(t_rect, t_rect);
 
 typedef union u_vec4    t_col;
 
-LIBMATH_API t_col   lm_col(double, double, double, double);
+LIBMATH_API t_col   lm_col(float, float, float, float);
 LIBMATH_API t_col   lm_col_uc(unsigned char, unsigned char, unsigned char, unsigned char);
 
 LIBMATH_API t_col   lm_col_from_int(int);
@@ -310,10 +310,10 @@ LIBMATH_API bool    lm_col_eq(t_col, t_col);
 
 union u_mat2 {
     struct {
-        double  m0, m1,
+        float   m0, m1,
                 m2, m3;
     };
-    double      ptr[2][2];
+    float       ptr[2][2];
     t_vec2      vec[2];
 };
 
@@ -324,9 +324,9 @@ LIBMATH_API t_mat2  lm_mat2_identity(void);
 LIBMATH_API t_mat2  lm_mat2_add(t_mat2, t_mat2);
 LIBMATH_API t_mat2  lm_mat2_sub(t_mat2, t_mat2);
 LIBMATH_API t_mat2  lm_mat2_mul(t_mat2, t_mat2);
-LIBMATH_API t_mat2  lm_mat2_mulv(t_mat2, double);
+LIBMATH_API t_mat2  lm_mat2_mulv(t_mat2, float);
 
-LIBMATH_API double  lm_mat2_det(t_mat2);
+LIBMATH_API float   lm_mat2_det(t_mat2);
 
 LIBMATH_API bool    lm_mat2_eq(t_mat2, t_mat2);
 
@@ -337,11 +337,11 @@ LIBMATH_API bool    lm_mat2_eq(t_mat2, t_mat2);
 
 union u_mat3 {
     struct {
-        double  m0, m1, m2,
+        float   m0, m1, m2,
                 m3, m4, m5,
                 m6, m7, m8;
     };
-    double      ptr[3][3];
+    float       ptr[3][3];
     t_vec3      vec[3];
 };
 
@@ -352,9 +352,9 @@ LIBMATH_API t_mat3  lm_mat3_identity(void);
 LIBMATH_API t_mat3  lm_mat3_add(t_mat3, t_mat3);
 LIBMATH_API t_mat3  lm_mat3_sub(t_mat3, t_mat3);
 LIBMATH_API t_mat3  lm_mat3_mul(t_mat3, t_mat3);
-LIBMATH_API t_mat3  lm_mat3_mulv(t_mat3, double);
+LIBMATH_API t_mat3  lm_mat3_mulv(t_mat3, float);
 
-LIBMATH_API double  lm_mat3_det(t_mat3);
+LIBMATH_API float   lm_mat3_det(t_mat3);
 
 LIBMATH_API bool    lm_mat3_eq(t_mat3, t_mat3);
 
@@ -365,12 +365,12 @@ LIBMATH_API bool    lm_mat3_eq(t_mat3, t_mat3);
 
 union u_mat4 {
     struct {
-        double  m0,  m1,  m2,  m3,
+        float   m0,  m1,  m2,  m3,
                 m4,  m5,  m6,  m7,
                 m8,  m9,  m10, m11,
                 m12, m13, m14, m15;
     };
-    double      ptr[4][4];
+    float       ptr[4][4];
     t_vec4      vec[4];
 };
 
@@ -381,16 +381,16 @@ LIBMATH_API t_mat4  lm_mat4_identity(void);
 LIBMATH_API t_mat4  lm_mat4_add(t_mat4, t_mat4);
 LIBMATH_API t_mat4  lm_mat4_sub(t_mat4, t_mat4);
 LIBMATH_API t_mat4  lm_mat4_mul(t_mat4, t_mat4);
-LIBMATH_API t_mat4  lm_mat4_mulv(t_mat4, double);
+LIBMATH_API t_mat4  lm_mat4_mulv(t_mat4, float);
 
 LIBMATH_API t_mat4  lm_mat4_translate(t_vec3);
 LIBMATH_API t_mat4  lm_mat4_scale(t_vec3);
-LIBMATH_API t_mat4  lm_mat4_rotate(t_vec3, double);
+LIBMATH_API t_mat4  lm_mat4_rotate(t_vec3, float);
 
-LIBMATH_API double  lm_mat4_det(t_mat4);
+LIBMATH_API float   lm_mat4_det(t_mat4);
 
-LIBMATH_API t_mat4  lm_mat4_ortho(double, double, double, double, double, double);
-LIBMATH_API t_mat4  lm_mat4_persp(double, double, double, double);
+LIBMATH_API t_mat4  lm_mat4_ortho(float, float, float, float, float, float);
+LIBMATH_API t_mat4  lm_mat4_persp(float, float, float, float);
 LIBMATH_API t_mat4  lm_mat4_lookat(t_vec3, t_vec3, t_vec3);
 
 LIBMATH_API bool    lm_mat4_eq(t_mat4, t_mat4);
@@ -406,7 +406,7 @@ LIBMATH_API bool    lm_mat4_eq(t_mat4, t_mat4);
 /* SECTION: Standard Utilities
  * * * * * * * * * * * * * * */
 
-LIBMATH_API double  lm_min(double a, double b) {
+LIBMATH_API float   lm_min(float  a, float  b) {
 
 #  if defined (LIBMATH_USE_STDLIB)
     return (fmin(a, b));
@@ -415,7 +415,7 @@ LIBMATH_API double  lm_min(double a, double b) {
     return (a < b ? a : b);
 }
 
-LIBMATH_API double  lm_max(double a, double b) {
+LIBMATH_API float   lm_max(float  a, float  b) {
 
 #  if defined (LIBMATH_USE_STDLIB)
     return (fmax(a, b));
@@ -424,7 +424,7 @@ LIBMATH_API double  lm_max(double a, double b) {
     return (a > b ? a : b);
 }
 
-LIBMATH_API double  lm_abs(double f) {
+LIBMATH_API float   lm_abs(float  f) {
 
 #  if defined (LIBMATH_USE_STDLIB)
     return (fabs(f));
@@ -433,7 +433,7 @@ LIBMATH_API double  lm_abs(double f) {
     return (f < 0.0 ? -f : f);
 }
 
-LIBMATH_API double  lm_ceil(double f) {
+LIBMATH_API float   lm_ceil(float  f) {
 
 #  if defined (LIBMATH_USE_STDLIB)
     return (ceil(f));
@@ -442,7 +442,7 @@ LIBMATH_API double  lm_ceil(double f) {
     return ((int) f + 1.0);
 }
 
-LIBMATH_API double  lm_floor(double f) {
+LIBMATH_API float   lm_floor(float  f) {
 
 #  if defined (LIBMATH_USE_STDLIB)
     return (floor(f));
@@ -451,7 +451,7 @@ LIBMATH_API double  lm_floor(double f) {
     return ((int) f);
 }
 
-LIBMATH_API double  lm_round(double f) {
+LIBMATH_API float   lm_round(float  f) {
 
 #  if defined (LIBMATH_USE_STDLIB)
     return (round(f));
@@ -460,21 +460,21 @@ LIBMATH_API double  lm_round(double f) {
     return ((lm_frac(f) < 0.5 ? lm_floor(f) : lm_ceil(f)));
 }
 
-LIBMATH_API double  lm_clamp(double a, double min, double max) { return (lm_min(lm_max(a, min), max)); }
+LIBMATH_API float   lm_clamp(float  a, float  min, float  max) { return (lm_min(lm_max(a, min), max)); }
 
-LIBMATH_API double  lm_clampf_zo(double a) { return (lm_clamp(a, 0.0, 1.0)); }
+LIBMATH_API float   lm_clampf_zo(float  a) { return (lm_clamp(a, 0.0, 1.0)); }
 
-LIBMATH_API double  lm_lerp(double a, double b, double t) { return (a + t * (b - a)); }
+LIBMATH_API float   lm_lerp(float  a, float  b, float  t) { return (a + t * (b - a)); }
 
-LIBMATH_API double  lm_lerpf_zo(double a, double b, double t) { return (lm_lerp(a, b, lm_clampf_zo(t))); }
+LIBMATH_API float   lm_lerpf_zo(float  a, float  b, float  t) { return (lm_lerp(a, b, lm_clampf_zo(t))); }
 
-LIBMATH_API double  lm_pow(double base, size_t exp) {
+LIBMATH_API float   lm_pow(float  base, size_t exp) {
 
 #  if defined (LIBMATH_USE_STDLIB)
     return (pow(base, exp));
 #  endif /* LIBMATH_USE_STDLIB */
 
-    double  result;
+    float   result;
 
     if (!exp) { return (1); }
     result = base;
@@ -484,7 +484,7 @@ LIBMATH_API double  lm_pow(double base, size_t exp) {
     return (result);
 }
 
-LIBMATH_API double  lm_sqr(double base) {
+LIBMATH_API float   lm_sqr(float  base) {
 
 #  if defined (LIBMATH_USE_STDLIB)
     return (sqr(base));
@@ -493,7 +493,7 @@ LIBMATH_API double  lm_sqr(double base) {
     return (base * base);
 }
 
-LIBMATH_API double  lm_sqrt(double value) {
+LIBMATH_API float   lm_sqrt(float  value) {
 
 #  if defined (LIBMATH_USE_STDLIB)
     return (sqrt(value));
@@ -519,9 +519,9 @@ float   low, high, middle;
     return (middle);
 }
 
-LIBMATH_API double  lm_fmod(double a, double b) { return (a - (int) (a / b) * b); }
+LIBMATH_API float   lm_fmod(float  a, float  b) { return (a - (int) (a / b) * b); }
 
-LIBMATH_API double  lm_frac(double value) { return (value - (int) value); }
+LIBMATH_API float   lm_frac(float  value) { return (value - (int) value); }
 
 
 
@@ -539,8 +539,8 @@ LIBMATH_API size_t  lm_fact(size_t value) {
 
 
 
-LIBMATH_API void    lm_swap(double *a, double *b) {
-    double  temp;
+LIBMATH_API void    lm_swap(float  *a, float  *b) {
+    float   temp;
 
     if (a == b) { return; }
     temp = *a;
@@ -553,13 +553,13 @@ LIBMATH_API void    lm_swap(double *a, double *b) {
 /* SECTION: Trigonometric
  * * * * * * * * * * * * */
 
-LIBMATH_API double  lm_sin(double x) {
+LIBMATH_API float   lm_sin(float  x) {
 
 #  if defined (LIBMATH_USE_STDLIB)
     return (sin(x));
 #  endif /* LIBMATH_USE_STDLIB */
 
-    double  result, sign;
+    float   result, sign;
     
     sign = 1.0;
     while (x < -LM_PI / 2.0) { x += LM_PI, sign *= -1.0; }
@@ -567,7 +567,7 @@ LIBMATH_API double  lm_sin(double x) {
     
     result = 0.0;
     for (size_t n = 0 ;; n++) {
-        double  term;
+        float   term;
 
         term = (lm_pow(-1, n) / lm_fact(2 * n + 1)) * lm_pow(x, 2 * n + 1);
         if (lm_abs(term) < LM_EPSILON) {
@@ -579,7 +579,7 @@ LIBMATH_API double  lm_sin(double x) {
     return (result * sign);
 }
 
-LIBMATH_API double  lm_cos(double x) {
+LIBMATH_API float   lm_cos(float  x) {
 
 #  if defined (LIBMATH_USE_STDLIB)
     return (cos(x));
@@ -588,7 +588,7 @@ LIBMATH_API double  lm_cos(double x) {
     return (lm_sin(LM_PI / 2.0 - x));
 }
 
-LIBMATH_API double  lm_tan(double x) {
+LIBMATH_API float   lm_tan(float  x) {
 
 #  if defined (LIBMATH_USE_STDLIB)
     return (tan(x));
@@ -597,7 +597,7 @@ LIBMATH_API double  lm_tan(double x) {
     return (lm_sin(x) / lm_cos(x));
 }
 
-LIBMATH_API double  lm_cot(double x) {
+LIBMATH_API float   lm_cot(float  x) {
 
 #  if defined (LIBMATH_USE_STDLIB)
     return (tan(x));
@@ -606,13 +606,13 @@ LIBMATH_API double  lm_cot(double x) {
     return (1 / lm_tan(x));
 }
 
-LIBMATH_API double  lm_asin(double x) {
+LIBMATH_API float   lm_asin(float  x) {
 
 #  if defined (LIBMATH_USE_STDLIB)
     return (asin(x));
 #  endif /* LIBMATH_USE_STDLIB */
 
-    double  result, sign;
+    float   result, sign;
 
     x = lm_abs(x);
     sign = (x < 0.0) ? 1.0 : 0.0;
@@ -627,7 +627,7 @@ LIBMATH_API double  lm_asin(double x) {
     return (result - 2.0 * sign * result);
 }
 
-LIBMATH_API double  lm_acos(double x) {
+LIBMATH_API float   lm_acos(float  x) {
 
 #  if defined (LIBMATH_USE_STDLIB)
     return (acos(x));
@@ -636,7 +636,7 @@ LIBMATH_API double  lm_acos(double x) {
     return (LM_PI / 2.0 - lm_asin(x));
 }
 
-LIBMATH_API double  lm_atan(double x) {
+LIBMATH_API float   lm_atan(float  x) {
 
 #  if defined (LIBMATH_USE_STDLIB)
     return (atan(x));
@@ -645,7 +645,7 @@ LIBMATH_API double  lm_atan(double x) {
     return (lm_asin(x / lm_sqrt(1 + x * x)));
 }
 
-LIBMATH_API double  lm_acot(double x) {
+LIBMATH_API float   lm_acot(float  x) {
 
 #  if defined (LIBMATH_USE_STDLIB)
     return (acot(x));
@@ -654,7 +654,7 @@ LIBMATH_API double  lm_acot(double x) {
     return (LM_PI / 2.0 - lm_atan(x));
 }
 
-LIBMATH_API double  lm_atan2(double y, double x) {
+LIBMATH_API float   lm_atan2(float  y, float  x) {
 
 #  if defined (LIBMATH_USE_STDLIB)
     return (atan2(y, x));
@@ -677,7 +677,7 @@ LIBMATH_API double  lm_atan2(double y, double x) {
 /* SECTION: t_vec2
  * * * * * * * * */
 
-LIBMATH_API t_vec2  lm_vec2(double x, double y) { return ((t_vec2) { .x = x, .y = y } ); }
+LIBMATH_API t_vec2  lm_vec2(float  x, float  y) { return ((t_vec2) { .x = x, .y = y } ); }
 
 LIBMATH_API t_vec2  lm_vec2_zero(void) { return (lm_vec2(0.0, 0.0)); }
 
@@ -685,19 +685,19 @@ LIBMATH_API t_vec2  lm_vec2_cpy(t_vec2 v) { return (lm_vec2(v.x, v.y)); }
 
 LIBMATH_API t_vec2  lm_vec2_add(t_vec2 a, t_vec2 b) { return (lm_vec2(a.x + b.x, a.y + b.y)); }
 
-LIBMATH_API t_vec2  lm_vec2_addv(t_vec2 v, double f) { return (lm_vec2(v.x + f, v.y + f)); }
+LIBMATH_API t_vec2  lm_vec2_addv(t_vec2 v, float  f) { return (lm_vec2(v.x + f, v.y + f)); }
 
 LIBMATH_API t_vec2  lm_vec2_sub(t_vec2 a, t_vec2 b) { return (lm_vec2(a.x - b.x, a.y - b.y)); }
 
-LIBMATH_API t_vec2  lm_vec2_subv(t_vec2 v, double f) { return (lm_vec2(v.x - f, v.y - f)); }
+LIBMATH_API t_vec2  lm_vec2_subv(t_vec2 v, float  f) { return (lm_vec2(v.x - f, v.y - f)); }
 
 LIBMATH_API t_vec2  lm_vec2_mul(t_vec2 a, t_vec2 b) { return (lm_vec2(a.x * b.x, a.y * b.y)); }
 
-LIBMATH_API t_vec2  lm_vec2_mulv(t_vec2 v, double f) { return (lm_vec2(v.x * f, v.y * f)); }
+LIBMATH_API t_vec2  lm_vec2_mulv(t_vec2 v, float  f) { return (lm_vec2(v.x * f, v.y * f)); }
 
 LIBMATH_API t_vec2  lm_vec2_div(t_vec2 a, t_vec2 b) { return (lm_vec2(a.x / b.x, a.y / b.y)); }
 
-LIBMATH_API t_vec2  lm_vec2_divv(t_vec2 v, double f) { return (lm_vec2(v.x / f, v.y / f)); }
+LIBMATH_API t_vec2  lm_vec2_divv(t_vec2 v, float  f) { return (lm_vec2(v.x / f, v.y / f)); }
 
 LIBMATH_API t_vec2  lm_vec2_clamp(t_vec2 v, t_vec2 min, t_vec2 max) {
     return ((t_vec2) {
@@ -711,18 +711,18 @@ LIBMATH_API t_vec2  lm_vec2_clamp_zo(t_vec2 v) {
     return (lm_vec2_clamp(v, lm_vec2(0.0, 0.0), lm_vec2(1.0, 1.0)));
 }
 
-LIBMATH_API t_vec2  lm_vec2_clamp_val(t_vec2 v, double min, double max) {
+LIBMATH_API t_vec2  lm_vec2_clamp_val(t_vec2 v, float  min, float  max) {
     return (lm_vec2_clamp(v, lm_vec2(min, min), lm_vec2(max, max)));
 }
 
-LIBMATH_API t_vec2  lm_vec2_lerp(t_vec2 a, t_vec2 b, double t) {
+LIBMATH_API t_vec2  lm_vec2_lerp(t_vec2 a, t_vec2 b, float  t) {
     return ((t_vec2) {
             .x = lm_lerp(a.x, b.x, t),
             .y = lm_lerp(a.y, b.y, t)
         }
     );
 }
-LIBMATH_API t_vec2  lm_vec2_lerp_zo(t_vec2 a, t_vec2 b, double t) {
+LIBMATH_API t_vec2  lm_vec2_lerp_zo(t_vec2 a, t_vec2 b, float  t) {
     return ((t_vec2) {
             .x = lm_lerpf_zo(a.x, b.x, t),
             .y = lm_lerpf_zo(a.y, b.y, t)
@@ -738,9 +738,9 @@ LIBMATH_API t_vec2  lm_vec2_dir(t_vec2 a, t_vec2 b) {
     );
 }
 
-LIBMATH_API t_vec2  lm_vec2_move_towards(t_vec2 start, t_vec2 target, double t) {
+LIBMATH_API t_vec2  lm_vec2_move_towards(t_vec2 start, t_vec2 target, float  t) {
     t_vec2  result, delta;
-    double  val, dist;
+    float   val, dist;
 
     delta = lm_vec2_sub(target, start);
     val = lm_vec2_len_sqr(delta);
@@ -756,7 +756,7 @@ LIBMATH_API t_vec2  lm_vec2_move_towards(t_vec2 start, t_vec2 target, double t) 
 
 LIBMATH_API t_vec2  lm_vec2_normalize(t_vec2 v) {
     t_vec2  result;
-    double  len, leninv;
+    float   len, leninv;
 
     result = lm_vec2(0, 0);
     len = lm_vec2_len(v);
@@ -768,16 +768,16 @@ LIBMATH_API t_vec2  lm_vec2_normalize(t_vec2 v) {
     return (result);
 }
 
-LIBMATH_API double  lm_vec2_dist(t_vec2 a, t_vec2 b) { return (lm_sqrt((a.x - b.x) * (a.x - b.x) + (a.y - b.y) * (a.y - b.y))); }
+LIBMATH_API float   lm_vec2_dist(t_vec2 a, t_vec2 b) { return (lm_sqrt((a.x - b.x) * (a.x - b.x) + (a.y - b.y) * (a.y - b.y))); }
 
-LIBMATH_API double  lm_vec2_dist_sqr(t_vec2 a, t_vec2 b) { return ((a.x - b.x) * (a.x - b.x) + (a.y - b.y) * (a.y - b.y)); }
+LIBMATH_API float   lm_vec2_dist_sqr(t_vec2 a, t_vec2 b) { return ((a.x - b.x) * (a.x - b.x) + (a.y - b.y) * (a.y - b.y)); }
 
-LIBMATH_API double  lm_vec2_len(t_vec2 a) { return (lm_sqrt((a.x * a.x) + (a.y * a.y))); }
+LIBMATH_API float   lm_vec2_len(t_vec2 a) { return (lm_sqrt((a.x * a.x) + (a.y * a.y))); }
 
-LIBMATH_API double  lm_vec2_len_sqr(t_vec2 a) { return ((a.x * a.x) + (a.y * a.y)); }
+LIBMATH_API float   lm_vec2_len_sqr(t_vec2 a) { return ((a.x * a.x) + (a.y * a.y)); }
 
-LIBMATH_API double  lm_vec2_ang(t_vec2 a, t_vec2 b) {
-    double  dot, det;
+LIBMATH_API float   lm_vec2_ang(t_vec2 a, t_vec2 b) {
+    float   dot, det;
 
     dot = a.x * b.x + a.y * b.y;
     det = a.x * b.y - a.y * b.x;
@@ -791,7 +791,7 @@ LIBMATH_API bool    lm_vec2_eq(t_vec2 a, t_vec2 b) { return (a.x == b.x && a.y =
 /* SECTION: t_vec3
  * * * * * * * * */
 
-LIBMATH_API t_vec3  lm_vec3(double x, double y, double z) { return ((t_vec3) { .x = x, .y = y, .z = z } ); }
+LIBMATH_API t_vec3  lm_vec3(float  x, float  y, float  z) { return ((t_vec3) { .x = x, .y = y, .z = z } ); }
 
 LIBMATH_API t_vec3  lm_vec3_zero(void) { return (lm_vec3(0.0, 0.0, 0.0)); }
 
@@ -799,19 +799,19 @@ LIBMATH_API t_vec3  lm_vec3_cpy(t_vec3 v) { return (lm_vec3(v.x, v.y, v.z)); }
 
 LIBMATH_API t_vec3  lm_vec3_add(t_vec3 a, t_vec3 b) { return (lm_vec3(a.x + b.x, a.y + b.y, a.z + b.z)); }
 
-LIBMATH_API t_vec3  lm_vec3_addv(t_vec3 v, double f) { return (lm_vec3(v.x + f, v.y + f, v.z + f)); }
+LIBMATH_API t_vec3  lm_vec3_addv(t_vec3 v, float  f) { return (lm_vec3(v.x + f, v.y + f, v.z + f)); }
 
 LIBMATH_API t_vec3  lm_vec3_sub(t_vec3 a, t_vec3 b) { return (lm_vec3(a.x - b.x, a.y - b.y, a.z - b.z)); }
 
-LIBMATH_API t_vec3  lm_vec3_subv(t_vec3 v, double f) { return (lm_vec3(v.x - f, v.y - f, v.z - f)); }
+LIBMATH_API t_vec3  lm_vec3_subv(t_vec3 v, float  f) { return (lm_vec3(v.x - f, v.y - f, v.z - f)); }
 
 LIBMATH_API t_vec3  lm_vec3_mul(t_vec3 a, t_vec3 b) { return (lm_vec3(a.x * b.x, a.y * b.y, a.z * b.z)); }
 
-LIBMATH_API t_vec3  lm_vec3_mulv(t_vec3 v, double f) { return (lm_vec3(v.x * f, v.y * f, v.z * f)); }
+LIBMATH_API t_vec3  lm_vec3_mulv(t_vec3 v, float  f) { return (lm_vec3(v.x * f, v.y * f, v.z * f)); }
 
 LIBMATH_API t_vec3  lm_vec3_div(t_vec3 a, t_vec3 b) { return (lm_vec3(a.x / b.x, a.y / b.y, a.z / b.z)); }
 
-LIBMATH_API t_vec3  lm_vec3_divv(t_vec3 v, double f) { return (lm_vec3(v.x / f, v.y / f, v.z / f)); }
+LIBMATH_API t_vec3  lm_vec3_divv(t_vec3 v, float  f) { return (lm_vec3(v.x / f, v.y / f, v.z / f)); }
 
 LIBMATH_API t_vec3  lm_vec3_clamp(t_vec3 v, t_vec3 min, t_vec3 max) {
     return ((t_vec3) {
@@ -826,11 +826,11 @@ LIBMATH_API t_vec3  lm_vec3_clamp_zo(t_vec3 v) {
     return (lm_vec3_clamp(v, lm_vec3(0.0, 0.0, 0.0), lm_vec3(1.0, 1.0, 1.0)));
 }
 
-LIBMATH_API t_vec3  lm_vec3_clamp_val(t_vec3 v, double min, double max) {
+LIBMATH_API t_vec3  lm_vec3_clamp_val(t_vec3 v, float  min, float  max) {
     return (lm_vec3_clamp(v, lm_vec3(min, min, min), lm_vec3(max, max, max)));
 }
 
-LIBMATH_API t_vec3  lm_vec3_lerp(t_vec3 a, t_vec3 b, double t) {
+LIBMATH_API t_vec3  lm_vec3_lerp(t_vec3 a, t_vec3 b, float  t) {
     return ((t_vec3) {
             .x = lm_lerp(a.x, b.x, t),
             .y = lm_lerp(a.y, b.y, t),
@@ -838,7 +838,7 @@ LIBMATH_API t_vec3  lm_vec3_lerp(t_vec3 a, t_vec3 b, double t) {
         }
     );
 }
-LIBMATH_API t_vec3  lm_vec3_lerp_zo(t_vec3 a, t_vec3 b, double t) {
+LIBMATH_API t_vec3  lm_vec3_lerp_zo(t_vec3 a, t_vec3 b, float  t) {
     return ((t_vec3) {
             .x = lm_lerpf_zo(a.x, b.x, t),
             .y = lm_lerpf_zo(a.y, b.y, t),
@@ -847,9 +847,9 @@ LIBMATH_API t_vec3  lm_vec3_lerp_zo(t_vec3 a, t_vec3 b, double t) {
     );
 }
 
-LIBMATH_API t_vec3  lm_vec3_move_towards(t_vec3 start, t_vec3 target, double t) {
+LIBMATH_API t_vec3  lm_vec3_move_towards(t_vec3 start, t_vec3 target, float  t) {
     t_vec3  result, delta;
-    double  val, dist;
+    float   val, dist;
 
     delta = lm_vec3_sub(target, start);
     val = lm_vec3_len_sqr(delta);
@@ -875,7 +875,7 @@ LIBMATH_API t_vec3  lm_vec3_cross(t_vec3 a, t_vec3 b) {
 
 LIBMATH_API t_vec3  lm_vec3_normalize(t_vec3 v) {
     t_vec3  result;
-    double  len, leninv;
+    float   len, leninv;
 
     result = lm_vec3(0, 0, 0);
     len = lm_vec3_len(v);
@@ -888,24 +888,24 @@ LIBMATH_API t_vec3  lm_vec3_normalize(t_vec3 v) {
     return (result);
 }
 
-LIBMATH_API double  lm_vec3_dist(t_vec3 a, t_vec3 b) { return (lm_sqrt((a.x - b.x) * (a.x - b.x) + (a.y - b.y) * (a.y - b.y) + (a.z - b.z) * (a.z - b.z))); }
+LIBMATH_API float   lm_vec3_dist(t_vec3 a, t_vec3 b) { return (lm_sqrt((a.x - b.x) * (a.x - b.x) + (a.y - b.y) * (a.y - b.y) + (a.z - b.z) * (a.z - b.z))); }
 
-LIBMATH_API double  lm_vec3_dist_sqr(t_vec3 a, t_vec3 b) { return ((a.x - b.x) * (a.x - b.x) + (a.y - b.y) * (a.y - b.y) + (a.z - b.z) * (a.z - b.z)); }
+LIBMATH_API float   lm_vec3_dist_sqr(t_vec3 a, t_vec3 b) { return ((a.x - b.x) * (a.x - b.x) + (a.y - b.y) * (a.y - b.y) + (a.z - b.z) * (a.z - b.z)); }
 
-LIBMATH_API double  lm_vec3_len(t_vec3 a) { return (lm_sqrt((a.x * a.x) + (a.y * a.y) + (a.z * a.z))); }
+LIBMATH_API float   lm_vec3_len(t_vec3 a) { return (lm_sqrt((a.x * a.x) + (a.y * a.y) + (a.z * a.z))); }
 
-LIBMATH_API double  lm_vec3_len_sqr(t_vec3 a) { return ((a.x * a.x) + (a.y * a.y) + (a.z * a.z)); }
+LIBMATH_API float   lm_vec3_len_sqr(t_vec3 a) { return ((a.x * a.x) + (a.y * a.y) + (a.z * a.z)); }
 
-LIBMATH_API double  lm_vec3_ang(t_vec3 a, t_vec3 b) {
+LIBMATH_API float   lm_vec3_ang(t_vec3 a, t_vec3 b) {
     t_vec3  cross;
-    double  dot, len;
+    float   dot, len;
 
     cross = lm_vec3_cross(a, b);
     len = lm_vec3_len_sqr(cross);
     dot = lm_vec3_len(cross);
     return (lm_atan2(len, dot));
 }
-LIBMATH_API double  lm_vec3_dot(t_vec3 a, t_vec3 b) {
+LIBMATH_API float   lm_vec3_dot(t_vec3 a, t_vec3 b) {
     return (a.x * b.x + a.y * b.y + a.z * b.z);
 }
 
@@ -916,7 +916,7 @@ LIBMATH_API bool    lm_vec3_eq(t_vec3 a, t_vec3 b) { return (a.x == b.x && a.y =
 /* SECTION: t_vec4
  * * * * * * * * */
 
-LIBMATH_API t_vec4  lm_vec4(double x, double y, double z, double w) { return ((t_vec4) { .x = x, .y = y, .z = z, .w = w } ); }
+LIBMATH_API t_vec4  lm_vec4(float  x, float  y, float  z, float  w) { return ((t_vec4) { .x = x, .y = y, .z = z, .w = w } ); }
 
 LIBMATH_API t_vec4  lm_vec4_zero(void) { return (lm_vec4(0.0, 0.0, 0.0, 0.0)); }
 
@@ -924,19 +924,19 @@ LIBMATH_API t_vec4  lm_vec4_cpy(t_vec4 v) { return (lm_vec4(v.x, v.y, v.z, v.w))
 
 LIBMATH_API t_vec4  lm_vec4_add(t_vec4 a, t_vec4 b) { return (lm_vec4(a.x + b.x, a.y + b.y, a.z + b.z, a.w + b.w)); }
 
-LIBMATH_API t_vec4  lm_vec4_addv(t_vec4 v, double f) { return (lm_vec4(v.x + f, v.y + f, v.z + f, v.w + f)); }
+LIBMATH_API t_vec4  lm_vec4_addv(t_vec4 v, float  f) { return (lm_vec4(v.x + f, v.y + f, v.z + f, v.w + f)); }
 
 LIBMATH_API t_vec4  lm_vec4_sub(t_vec4 a, t_vec4 b) { return (lm_vec4(a.x - b.x, a.y - b.y, a.z - b.z, a.w - b.w)); }
 
-LIBMATH_API t_vec4  lm_vec4_subv(t_vec4 v, double f) { return (lm_vec4(v.x - f, v.y - f, v.z - f, v.w - f)); }
+LIBMATH_API t_vec4  lm_vec4_subv(t_vec4 v, float  f) { return (lm_vec4(v.x - f, v.y - f, v.z - f, v.w - f)); }
 
 LIBMATH_API t_vec4  lm_vec4_mul(t_vec4 a, t_vec4 b) { return (lm_vec4(a.x * b.x, a.y * b.y, a.z * b.z, a.w * b.w)); }
 
-LIBMATH_API t_vec4  lm_vec4_mulv(t_vec4 v, double f) { return (lm_vec4(v.x * f, v.y * f, v.z * f, v.w * f)); }
+LIBMATH_API t_vec4  lm_vec4_mulv(t_vec4 v, float  f) { return (lm_vec4(v.x * f, v.y * f, v.z * f, v.w * f)); }
 
 LIBMATH_API t_vec4  lm_vec4_div(t_vec4 a, t_vec4 b) { return (lm_vec4(a.x / b.x, a.y / b.y, a.z / b.z, a.w / b.w)); }
 
-LIBMATH_API t_vec4  lm_vec4_divv(t_vec4 v, double f) { return (lm_vec4(v.x / f, v.y / f, v.z / f, v.w / f)); }
+LIBMATH_API t_vec4  lm_vec4_divv(t_vec4 v, float  f) { return (lm_vec4(v.x / f, v.y / f, v.z / f, v.w / f)); }
 
 LIBMATH_API t_vec4  lm_vec4_clamp(t_vec4 v, t_vec4 min, t_vec4 max) {
     return ((t_vec4) {
@@ -952,11 +952,11 @@ LIBMATH_API t_vec4  lm_vec4_clamp_zo(t_vec4 v) {
     return (lm_vec4_clamp(v, lm_vec4(0.0, 0.0, 0.0, 0.0), lm_vec4(1.0, 1.0, 1.0, 1.0)));
 }
 
-LIBMATH_API t_vec4  lm_vec4_clamp_val(t_vec4 v, double min, double max) {
+LIBMATH_API t_vec4  lm_vec4_clamp_val(t_vec4 v, float  min, float  max) {
     return (lm_vec4_clamp(v, lm_vec4(min, min, min, min), lm_vec4(max, max, max, max)));
 }
 
-LIBMATH_API t_vec4  lm_vec4_lerp(t_vec4 a, t_vec4 b, double t) {
+LIBMATH_API t_vec4  lm_vec4_lerp(t_vec4 a, t_vec4 b, float  t) {
     return ((t_vec4) {
             .x = lm_lerp(a.x, b.x, t),
             .y = lm_lerp(a.y, b.y, t),
@@ -965,7 +965,7 @@ LIBMATH_API t_vec4  lm_vec4_lerp(t_vec4 a, t_vec4 b, double t) {
         }
     );
 }
-LIBMATH_API t_vec4  lm_vec4_lerp_zo(t_vec4 a, t_vec4 b, double t) {
+LIBMATH_API t_vec4  lm_vec4_lerp_zo(t_vec4 a, t_vec4 b, float  t) {
     return ((t_vec4) {
             .x = lm_lerpf_zo(a.x, b.x, t),
             .y = lm_lerpf_zo(a.y, b.y, t),
@@ -975,9 +975,9 @@ LIBMATH_API t_vec4  lm_vec4_lerp_zo(t_vec4 a, t_vec4 b, double t) {
     );
 }
 
-LIBMATH_API t_vec4  lm_vec4_move_towards(t_vec4 start, t_vec4 target, double t) {
+LIBMATH_API t_vec4  lm_vec4_move_towards(t_vec4 start, t_vec4 target, float  t) {
     t_vec4  result, delta;
-    double  val, dist;
+    float   val, dist;
 
     delta = lm_vec4_sub(target, start);
     val = lm_vec4_len_sqr(delta);
@@ -995,7 +995,7 @@ LIBMATH_API t_vec4  lm_vec4_move_towards(t_vec4 start, t_vec4 target, double t) 
 
 LIBMATH_API t_vec4  lm_vec4_normalize(t_vec4 v) {
     t_vec4  result;
-    double  len, leninv;
+    float   len, leninv;
 
     result = lm_vec4(0, 0, 0, 0);
     len = lm_vec4_len(v);
@@ -1009,13 +1009,13 @@ LIBMATH_API t_vec4  lm_vec4_normalize(t_vec4 v) {
     return (result);
 }
 
-LIBMATH_API double  lm_vec4_dist(t_vec4 a, t_vec4 b) { return (lm_sqrt((a.x - b.x) * (a.x - b.x) + (a.y - b.y) * (a.y - b.y) + (a.z - b.z) * (a.z - b.z) + (a.w - b.w) * (a.w - b.w))); }
+LIBMATH_API float   lm_vec4_dist(t_vec4 a, t_vec4 b) { return (lm_sqrt((a.x - b.x) * (a.x - b.x) + (a.y - b.y) * (a.y - b.y) + (a.z - b.z) * (a.z - b.z) + (a.w - b.w) * (a.w - b.w))); }
 
-LIBMATH_API double  lm_vec4_dist_sqr(t_vec4 a, t_vec4 b) { return ((a.x - b.x) * (a.x - b.x) + (a.y - b.y) * (a.y - b.y) + (a.z - b.z) * (a.z - b.z) + (a.w - b.w) * (a.w - b.w)); }
+LIBMATH_API float   lm_vec4_dist_sqr(t_vec4 a, t_vec4 b) { return ((a.x - b.x) * (a.x - b.x) + (a.y - b.y) * (a.y - b.y) + (a.z - b.z) * (a.z - b.z) + (a.w - b.w) * (a.w - b.w)); }
 
-LIBMATH_API double  lm_vec4_len(t_vec4 a) { return (lm_sqrt((a.x * a.x) + (a.y * a.y) + (a.z * a.z) + (a.w * a.w))); }
+LIBMATH_API float   lm_vec4_len(t_vec4 a) { return (lm_sqrt((a.x * a.x) + (a.y * a.y) + (a.z * a.z) + (a.w * a.w))); }
 
-LIBMATH_API double  lm_vec4_len_sqr(t_vec4 a) { return ((a.x * a.x) + (a.y * a.y) + (a.z * a.z) + (a.w * a.w)); }
+LIBMATH_API float   lm_vec4_len_sqr(t_vec4 a) { return ((a.x * a.x) + (a.y * a.y) + (a.z * a.z) + (a.w * a.w)); }
 
 LIBMATH_API bool    lm_vec4_eq(t_vec4 a, t_vec4 b) { return (a.x == b.x && a.y == b.y && a.z == b.z && a.w == b.w); }
 
@@ -1024,7 +1024,7 @@ LIBMATH_API bool    lm_vec4_eq(t_vec4 a, t_vec4 b) { return (a.x == b.x && a.y =
 /* SECTION: rect
  * * * * * * * */
 
-LIBMATH_API t_rect  lm_rect(double x, double y, double w, double h) { return ((t_rect) { .x = x, .y = y, .z = w, .w = h } ); }
+LIBMATH_API t_rect  lm_rect(float  x, float  y, float  w, float  h) { return ((t_rect) { .x = x, .y = y, .z = w, .w = h } ); }
 
 LIBMATH_API t_rect  lm_rect_zero(void) { return (lm_vec4_zero()); }
 
@@ -1049,7 +1049,7 @@ LIBMATH_API bool    lm_rect_eq(t_rect a, t_rect b) { return (lm_vec4_eq(a, b)); 
 /* SECTION: t_col
  * * * * * * * * */
 
-LIBMATH_API t_col   lm_col(double r, double g, double b, double a) { return (lm_vec4(r, g, b, a)); }
+LIBMATH_API t_col   lm_col(float  r, float  g, float  b, float  a) { return (lm_vec4(r, g, b, a)); }
 
 LIBMATH_API t_col   lm_col_uc(unsigned char r, unsigned char g, unsigned char b, unsigned char a) { return (lm_col(r / 255.0, g / 255.0, b / 255.0, a / 255.0)); }
 
@@ -1129,7 +1129,7 @@ LIBMATH_API t_mat2  lm_mat2_mul(t_mat2 a, t_mat2 b) {
 /*  v * [a b] = [av bv]
  *      [c d] = [cv dv]
  * * * * * * * * * * * */
-LIBMATH_API t_mat2  lm_mat2_mulv(t_mat2 m, double v) {
+LIBMATH_API t_mat2  lm_mat2_mulv(t_mat2 m, float  v) {
     t_mat2  result;
 
     result.vec[0] = lm_vec2_mulv(m.vec[0], v);
@@ -1142,8 +1142,8 @@ LIBMATH_API t_mat2  lm_mat2_mulv(t_mat2 m, double v) {
  *
  * det(A) = ad - cb
  * */
-LIBMATH_API double  lm_mat2_det(t_mat2 m) {
-    double  result;
+LIBMATH_API float   lm_mat2_det(t_mat2 m) {
+    float   result;
 
     result = m.m0 * m.m3;
     result -= m.m1 * m.m2;
@@ -1226,7 +1226,7 @@ LIBMATH_API t_mat3  lm_mat3_mul(t_mat3 a, t_mat3 b) {
 /*  v * [a b] = [av bv]
  *      [c d] = [cv dv]
  * * * * * * * * * * * */
-LIBMATH_API t_mat3  lm_mat3_mulv(t_mat3 m, double v) {
+LIBMATH_API t_mat3  lm_mat3_mulv(t_mat3 m, float  v) {
     t_mat3  result;
 
     result.vec[0] = lm_vec3_mulv(m.vec[0], v);
@@ -1241,8 +1241,8 @@ LIBMATH_API t_mat3  lm_mat3_mulv(t_mat3 m, double v) {
  *
  * det(A) = aei + bfg + cdh - gec - hfa - idb
  * */
-LIBMATH_API double  lm_mat3_det(t_mat3 m) {
-    double  result;
+LIBMATH_API float   lm_mat3_det(t_mat3 m) {
+    float   result;
 
     result = m.m0 * m.m4 * m.m8;
     result += m.m1 * m.m5 * m.m6;
@@ -1347,7 +1347,7 @@ LIBMATH_API t_mat4  lm_mat4_mul(t_mat4 a, t_mat4 b) {
 /*  v * [a b] = [av bv]
  *      [c d] = [cv dv]
  * * * * * * * * * * * */
-LIBMATH_API t_mat4  lm_mat4_mulv(t_mat4 m, double v) {
+LIBMATH_API t_mat4  lm_mat4_mulv(t_mat4 m, float  v) {
     t_mat4  result;
 
     result.vec[0] = lm_vec4_mulv(m.vec[0], v);
@@ -1377,11 +1377,11 @@ LIBMATH_API t_mat4  lm_mat4_scale(t_vec3 v) {
     return (result);
 }
 
-LIBMATH_API t_mat4  lm_mat4_rotate(t_vec3 v, double angle) {
+LIBMATH_API t_mat4  lm_mat4_rotate(t_vec3 v, float  angle) {
     t_mat4  result;
-    double  x, y, z;
-    double  len;
-    double  sinres, cosres, t;
+    float   x, y, z;
+    float   len;
+    float   sinres, cosres, t;
 
     sinres = lm_sin(angle);
     cosres = lm_cos(angle);
@@ -1420,9 +1420,9 @@ LIBMATH_API t_mat4  lm_mat4_rotate(t_vec3 v, double angle) {
  *                  [j k l]            [i k l]            [i j l]            [i j k]
  *                  [n o p]            [m o p]            [m n p]            [m n o]
  * */
-LIBMATH_API double  lm_mat4_det(t_mat4 m) {
+LIBMATH_API float   lm_mat4_det(t_mat4 m) {
     t_mat3  m0, m1, m2, m3;
-    double  result;
+    float   result;
 
     m0 = (t_mat3) { { m.m5,  m.m6,  m.m7,
                       m.m9,  m.m10, m.m11,
@@ -1440,7 +1440,7 @@ LIBMATH_API double  lm_mat4_det(t_mat4 m) {
     return (result);
 }
 
-LIBMATH_API t_mat4  lm_mat4_ortho(double left, double right, double top, double down, double near, double far) {
+LIBMATH_API t_mat4  lm_mat4_ortho(float  left, float  right, float  top, float  down, float  near, float  far) {
     t_mat4  result;
 
     result = lm_mat4_zero();
@@ -1457,19 +1457,19 @@ LIBMATH_API t_mat4  lm_mat4_ortho(double left, double right, double top, double 
     return (result);
 }
 
-LIBMATH_API t_mat4  lm_mat4_persp(double fov, double aspect, double near, double far) {
+LIBMATH_API t_mat4  lm_mat4_persp(float  fov, float  aspect, float  near, float  far) {
     t_mat4  result;
-    double  top, bottom, left, right;
-    double  rl, tb, fn;
+    float   top, bottom, left, right;
+    float   rl, tb, fn;
 
     top = near * lm_tan(fov * 0.5);
     bottom = -top;
     right = top * aspect;
     left = -right;
 
-    rl = (double) (right - left);
-    tb = (double) (top - bottom);
-    fn = (double) (far - near);
+    rl = (float) (right - left);
+    tb = (float) (top - bottom);
+    fn = (float) (far - near);
 
     result = lm_mat4_zero();
     result.ptr[0][0] = (near * 2.0) / rl; 
